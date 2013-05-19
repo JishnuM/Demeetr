@@ -4,49 +4,118 @@
 	<head>
 		<title>Meetup</title>
 		<meta name="viewport" content="width-device-width, initial-scale=1.0">
+		<link href = "../css/main.css" rel="stylesheet">
 		<link href = "../bootstrap/bootstrap.css" rel="stylesheet">
 		<link href = "../bootstrap/bootstrap-responsive.css" rel="stylesheet">
+		<script type="text/javascript" src="../js/jquery-1.9.1.min.js"></script>
+		<script type="text/javascript" src="../js/demeetr.js"></script>
+		<script type="text/javascript" src="../js/bootstrap.min.js"></script>
 	</head>
 	<body>
-		<div class = "navbar">
+		<div class = "navbar navbar-inverse">
 			<div class = "navbar-inner">
 				<div class = "container">
-					<div class = "nav-collapse collapse">				
+					<div class = "nav-collapse collapse">
+						<div class = "span1 offset1">
+							<img id="top-logo" src = "../logo/demeetr.png" \>
+						</div>
+						<div class = "span3" id = "title">
+							demeetr
+						</div>
+						<div class = "span4">
+							<!-- <input class = "navbar-search" type = "text" name = "search" value = "Search!"> -->
+						</div>
 						<ul class = "nav">
-							<li><a href = "">Home</a></li>
-							<li><a href = "">Profile</a></li>
-							<li><a href = "">Events</a></li>
+							<li><a href = "">Help</a></li>
+							<li><a href = "">About</a></li>
+							<li><a href = "">Contact Us</a></li>
 						</ul>
 					</div>
 				</div>
 			</div>
 		</div>
-		<div class="row-fluid">
-			<div class = "span5">
-				<!--Left-->
-				<div class = "span8 offset1">
-					<h2>Cut the hassle now!<h2>
-				</div>
-				<div class = "span7 offset2">
-					<button class = ".btn btn-primary">
-						Connect with Facebook!
-					</button>
-				</div>
-				<div class = "span7 offset2">
-					<button class = ".btn btn-danger">
-						Connect with Google!
-					</button>
-				</div>
-				<div class = "span7 offset2">
-					<button class = ".btn btn-info">
-						Connect with Twitter!
-					</button>
+
+		<div class="row-fluid" id = "body-row">
+			<div class = "span4 offset2" id="main-left">
+				<div>
+					<img id = "home-image" src = "../logo/people.png" />
+					<h3 align="center">A natural way to organize meetups</h3>
 				</div>
 			</div>
-			<div class = "span6 offset1">
-				<!--Right-->
-				<h1>Meetup</h1>
-				<h3>Because meeting friends should be a joy.</h3>
+			<div class = "span3 offset1" id="main-right">
+				<!--Left-->
+				<ul id = "myTab" class = "nav nav-tabs">
+					<li class = ""><a data-toggle="tab" href="#new">New User</a></li>
+					<li class = "active"><a data-toggle="tab" href = "#existing">Existing User</a></li>
+				</ul>
+				<div class = "tab-content">
+					<div id = "new" class = "tab-pane">
+						<h5>Use your preferred social network (recommended):</h5>
+						<div>
+							<button class = "socialsign">
+								Sign up with Facebook
+							</button>
+						</div>
+						<div>
+							<button class = "socialsign">
+								Sign up with Google
+							</button>
+						</div>
+						<div>
+							<button class = "socialsign">
+								Sign up with Twitter
+							</button>
+						</div>
+						<div id = "sign-up">
+							<h5>Use your email:</h5>
+							<div class = "row-fluid">
+								<div class = "span3">Name: </div>
+								<div class = "span6"><input type = "text" value = "Name" name = "username"></div>
+							</div>
+							<div class = "row-fluid">
+								<div class = "span3">Email: </div>
+								<div class = "span6"><input type = "text" value = "Email" name = "email"></div>
+							</div>
+							<div class = "row-fluid">
+								<div class = "span3">Password: </div>
+								<div class = "span6"><input type = "password" value = "Password" name = "password"></div>
+							</div>
+							<div>
+								<button class = "socialsign">
+								Sign up with Email
+								</button>
+							</div>
+						</div>
+					</div>
+					<div id = "existing" class = "tab-pane active">
+						<h5>Welcome back!</h5>
+						<div>
+							<button class = "socialsign">
+								Login with Facebook
+							</button>
+						</div>
+						<div>
+							<button class = "socialsign">
+								Login with Google
+							</button>
+						</div>
+						<div>
+							<button class = "socialsign">
+								Login with Twitter
+							</button>
+						</div>
+						<div id = "login">
+							<div class = "row-fluid">
+								<div class = "span3">Email: </div>
+								<div class = "span6"><input type = "text" value = "Email" name = "email"></div>
+							</div>
+							<div class = "row-fluid">
+								<div class = "span3">Password: </div>
+								<div class = "span6"><input type = "password" value = "Password" name = "password"></div>
+							</div>
+							<button class = "socialsign">Login</button>
+						</div>
+				</div>
 			</div>
 		</div>
 	</body>
