@@ -1,13 +1,14 @@
 #top-logo{
 	height: 40px;
 	float: right;
-	padding-top: 5px:;
+	padding-top: 10px:;
+	padding-bottom: 5px;
 }
 
 #title{
 	font-size: 30px;
 	color: #FFCC00;
-	padding-top: 7.5px;
+	padding-top: 10px;
 }
 
 #search-bar{
@@ -53,15 +54,35 @@
 	padding-bottom: 100px;
 }
 
-.myfooter{
-	clear: both;
-	float: bottom;
+.tab-list{
+	margin-top: 20px;
+	padding-top: 20px;
+	padding-bottom: 20px;
+}
+
+.side-tab{
 	padding-top: 10px;
 	padding-bottom: 10px;
 	text-align: center;
 	vertical-align: center;
-	background-color: gray;
-	color: #000000;
-	position: relative;
-	overflow: visible;
+	margin-top: 10px;
+	margin-bottom: 10px;
 }
+
+.active{
+	background-color: #FFCC00;
+}
+
+#event-list{
+	margin-top: 50px;
+	margin-bottom: 20px;
+	vertical-align: center;
+}
+
+.details{
+	padding-top: 10px;
+	padding-bottom: 10px;
+	vertical-align: center;
+	text-align: center;
+}
+

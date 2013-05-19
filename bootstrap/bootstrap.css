@@ -2934,7 +2934,7 @@ table th[class*="span"],
   left: auto;
 }
 
-.dropdown-menu .divider {
+.dropdown-menu .navider {
   *width: 100%;
   height: 1px;
   margin: 9px 1px;
