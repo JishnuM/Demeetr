@@ -4,9 +4,9 @@
 	<head>
 		<title>Event-title</title>
 		<meta name="viewport" content="width-device-width, initial-scale=1.0">
-		<link href = "../css/main.css" rel="stylesheet">
 		<link href = "../bootstrap/bootstrap.css" rel="stylesheet">
 		<link href = "../bootstrap/bootstrap-responsive.css" rel="stylesheet">
+		<link href = "../css/main.css" rel="stylesheet">
 		<script type="text/javascript" src="../js/jquery-1.9.1.min.js"></script>
 		<script type="text/javascript" src="../js/demeetr.js"></script>
 		<script type="text/javascript" src="../js/bootstrap.min.js"></script>
@@ -34,35 +34,145 @@
 				</div>
 			</div>
 		</div>
-		<!--Event title-->
-		<div class = "hero-unit">
-			<h2>Event-title</h2>
-			<h4>Number of people invited</h4>
-			<h4>Number of people required</h4>
-			<h4>Number of people can make it</h4>
-		</div>
+
 		<div class = "row-fluid">
-		<!--Event details-->
-			<div class = "span6 offset1">
-				<!--What and Where-->
+			<div class = "span2 offset2">
+				<div class = "container-fluid">
+					Placeholder for Events list
+				</div>
+			</div>
+
+			<div class = "span5 offset1">
 				<div class = "row-fluid">
-					<h3>Current Popular Choice</h3>
-					<ol>
-						<li>Second choice</li>
-						<li>Third choice</li>
-					</ol>
+					<div class = "span6">
+						<h3>{{ event-title }}</h3>
+						<h4>{{ time_window }}</h4>
+					</div>
+					<div class = "span5 offset1">
+						<div class = "row-fluid" id="status-box">
+						<h4>{{ status }} AT</h4>
+						<h5>{{ max(votes) }}</h5>
+						<h5>{{ best_time }}</h5>
+						</div>
+					</div>
+				</div>
+
+				<div class = "row-fluid event-box">
+					<h4>The People</h4>
+					<h5>Invited: {{ num_attending }}</h5>
+					<h5>Responded: {{ num_responded }}</h5>
+					<h5>Possible: {{ num_confirmed }}</h5>
+					<h6>Minimum Required: {{ num_required }}</h6>
+					<input type = "button" value = "Invite More" class = "btn"></button>
+				</div>
+
+				<div class = "row-fluid event-box">
+					<h4>The Place</h4>
+					<strong>{{ choices[0] }}</strong><span class = "pull-right">{{ votes[0] }}
+					<input type = "button" value = "Vote" class = "btn"></button></span>
+					<div class = "progress progress-info">
+						<div class = "bar" style = "width: 30%;"></div><!--{{ votes[0]/num_responded }}-->
+					</div>
+					<strong>{{ choices[1] }}</strong><span class = "pull-right">{{ votes[1] }}
+					<input type = "button" value = "Vote" class = "btn"></button></span>
+					<div class = "progress progress-success">
+						<div class = "bar" style = "width: 80%;"></div><!--{{ votes[1]/num_responded }}-->
+					</div>
+					<strong>{{ choices[2] }}</strong><span class = "pull-right">{{ votes[2] }}
+					<input type = "button" value = "Vote" class = "btn"></button></span>
+					<div class = "progress progress-info">
+						<div class = "bar" style = "width: 60%;"></div><!--{{ votes[2]/num_responded }}-->
+					</div>
+					<input type = "button" value = "Suggest New Place" class = "btn"></button>
 				</div>
 				<!--When-->
-				<div class = "row-fluid">
-					<h3>Current Popular Time Window</h3>
-					<h4>Timeline</h4>
+				<div class = "row-fluid event-box">
+					<h4>The Time</h4>
+
+					<div class = "timebar">
+						<h5>Recommended Time: {{ best_time }}</h5>
+						<h6>{{ num_possible }} can make it.</h6>
+						<h5>Overall Time Chart</h5>
+						<table class = "table" >
+							<tbody>
+								<tr class = "day">
+									<td colspan = "12" class = "bad"></td>
+									<td colspan = "12" class = "meh"></td>
+									<td colspan = "8" class = "good"></td>
+									<td colspan = "16" class = "bad"></td>
+								</tr>
+								<tr class = "day">
+									<td colspan = "10" class = "bad"></td>
+									<td colspan = "32" class = "meh"></td>
+									<td colspan = "6" class = "bad"></td>
+								</tr>
+								<tr class = "day">
+									<td colspan = "30" class = "bad"></td>
+									<td colspan = "10" class = "meh"></td>
+									<td colspan = "8" class = "bad"></td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+
+					<div class = "timebar">
+						<h5>Your Current Availability</h5><input type = "button" value = "Update" class = "btn"></button>
+						<table class = "table" >
+							<tbody>
+								<tr class = "day">
+									<td colspan = "24" class = "bad"></td>
+									<td colspan = "14" class = "good"></td>
+									<td colspan = "10" class = "bad"></td>
+								</tr>
+								<tr class = "day">
+									<td colspan = "48" class = "bad"></td>
+								</tr>
+								<tr class = "day">
+									<td colspan = "37" class = "bad"></td>
+									<td colspan = "7" class = "good"></td>
+									<td colspan = "4" class = "bad"></td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+
 				</div>
+
+				<div class = "row-fluid">
+					<h4>Event Buzz</h4>
+					<table class = "table">
+						<thead>
+							<tr>
+								<th colspan = "1">User</th>
+								<th colspan = "5">Comment</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>John</td>
+								<td>This event is an event to test whether making events through this event site is a satisfactory endeavour.</td>
+							</tr>
+							<tr>
+								<td>Adam</td>
+								<td>Whoa so cool i wanna play soccer!</td>
+							</tr>
+							<tr>
+								<td>Somebody</td>
+								<td>*Football</td>
+							</tr>
+							<tr>
+								<td>{{ user_name }}</td>
+								<td><input class = "input-block-level" type = "text" placeholder = "Comment"</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+
 			</div>
-			<!--User interaction-->
-			<div class = "span2">
-				<h1>Comments</h1>
-			</div>
+
 		</div>
+
+
 	</body>
 </html>
 

@@ -34,14 +34,6 @@
 .socialsign{
 	margin-top: 5px;
 	margin-bottom: 5px;
-	padding-top: 5px;
-	padding-bottom: 5px;
-	width: 100%;
-	text-align: center;
-	background-color: #FFCC00;
-	font-color: #000000;
-	font-style: bold;
-	vertical-align: center;
 }
 
 #home-image{
@@ -86,3 +78,36 @@
 	text-align: center;
 }
 
+#status-box{
+	padding-top: 10px;
+	padding-bottom: 10px;
+}
+
+.event-box{
+	padding-top: 20px;
+	padding-bottom: 20px;
+}
+
+.timebar .good{
+	background-color: green;
+	padding-top: 10px;
+	padding-bottom: 10px;
+}
+
+.timebar .bad{
+	background-color: red;
+	padding-top: 10px;
+	padding-bottom: 10px;
+}
+
+.timebar .meh{
+	background-color: orange;
+	padding-top: 10px;
+	padding-bottom: 10px;
+}
+
+.day {
+	width: 100%;
+	margin-bottom: 10px;
+	margin-top: 10px;
+}
