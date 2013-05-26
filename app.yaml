@@ -9,9 +9,37 @@ handlers:
   static_files: favicon.ico
   upload: favicon\.ico
 
-- url: .*
-  script: main.app
+- url: /css
+  static_dir: css
+
+- url: /logo
+  static_dir: logo
+
+- url: /js
+  static_dir: js
+
+- url: /bootstrap
+  static_dir: bootstrap
+
+- url: /
+  script: front.app
+
+- url: /about
+  script: front.app
+
+- url: /contact
+  script: front.app
+
+- url: /help
+  script: front.app
+
+- url: /.*
+  script: demeetr.app
+  login: required
 
 libraries:
 - name: webapp2
   version: "2.5.2"
+
+- name: jinja2
+  version: latest
