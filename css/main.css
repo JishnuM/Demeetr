@@ -1,8 +1,9 @@
 #top-logo{
 	height: 40px;
-	float: right;
+	float: left;
 	padding-top: 10px:;
 	padding-bottom: 5px;
+	padding-right: 5px;
 }
 
 #title{
@@ -37,7 +38,7 @@
 }
 
 #home-image{
-	padding-top: 80px;
+	padding-top: 10px;
 	padding-bottom: 10px;
 }
 
@@ -113,5 +114,5 @@
 }
 
 #about-right {
-	padding-top: 4%;
+	padding-top: 10px;
 }
