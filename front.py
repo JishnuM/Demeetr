@@ -41,9 +41,33 @@ class Help(webapp2.RequestHandler):
 		template = jinja_environment.get_template('help.html')
 		self.response.out.write(template.render())
 
+class Userhome(webapp2.RequestHandler):
+    def get(self):
+        template = jinja_environment.get_template('userhome.html')
+        self.response.out.write(template.render())
+
+class Events(webapp2.RequestHandler):
+    def get(self):
+        template = jinja_environment.get_template('eventhome.html')
+        self.response.out.write(template.render())
+
+class Settings(webapp2.RequestHandler):
+    def get(self):
+        template = jinja_environment.get_template('usersettings.html')
+        self.response.out.write(template.render())
+
+class Messages(webapp2.RequestHandler):
+    def get(self):
+        template = jinja_environment.get_template('usermsgs.html')
+        self.response.out.write(template.render())
+
 app = webapp2.WSGIApplication([
     ('/', FrontPage),
     ('/about', About),
     ('/contact',Contact),
-    ('/help',Help)
+    ('/help',Help),
+    ('/home', Userhome),
+    ('/events', Events),
+    ('/settings', Settings),
+    ('/messages', Messages)
 ], debug=True)

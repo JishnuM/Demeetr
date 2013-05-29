@@ -2,7 +2,7 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<title>{{ username }}'s Events</title>
+		<title>{ username }'s Events</title>
 		<meta name="viewport" content="width-device-width, initial-scale=1.0">
 		<link href = "../bootstrap/bootstrap.css" rel="stylesheet">
 		<link href = "../bootstrap/bootstrap-responsive.css" rel="stylesheet">
@@ -17,7 +17,7 @@
 				<div class = "container">
 					<div class = "span4 offset1">
 						<img id="top-logo" src = "../logo/demeetr.png" \>
-						<a href = "/">
+						<a href = "/home">
 						<div class = "span2" id = "title">
 							demeetr
 						</div>
@@ -31,7 +31,7 @@
 					</a>
 					<div class = "nav-collapse collapse">
 						<div class = "span4">
-							<input class = "navbar-search" type = "text" name = "search" value = "Search!">
+							<input class = "navbar-search" type = "text" name = "search" placeholder = "Search!">
 						</div>
 						<ul class = "nav">
 							<li><a href = "/help">Help</a></li>
@@ -48,17 +48,17 @@
 			<!--Sidebar-->
 			<div class = "span2 offset2">
 				<div class = "tab-list">
-					<a href = "">
+					<a href = "/home">
 						<div class = "side-tab myactive">
 							<h3>EVENTS</h3>
 						</div>
 					</a>
-					<a href = "">
+					<a href = "/messages">
 						<div class = "side-tab">
 							<h3>MESSAGES</h3>
 						</div>
 					</a>
-					<a href = "">
+					<a href = "/settings">
 						<div class = "side-tab">
 							<h3>SETTINGS</h3>
 						</div>
@@ -72,7 +72,7 @@
 					<h3>Username</h3>
 				</div>
 				<div id = "event-create">
-					<form action="eventcreate" method="post" class="form-inline">
+					<form action="/events" method="get" class="form-inline">
 						<fieldset>
 							<label>Event title</label>
 							<input class="input-small" type = "text" name = "title" placeholder = "Anything goes">
@@ -93,19 +93,19 @@
 							<th>Updates</th>
 						</thead>
 						<tbody>
-							<tr class = "success"><td>Akshat's Fake Birthday</td>
+							<tr class = "success"><td><a href = "/events">Akshat's Fake Birthday</a></td>
 								<td>22 May</td>
 								<td>3 new respondents</td>
 							</tr>
-							<tr class = "error"><td>Unpopular Movie!</td>
+							<tr class = "error"><td><a href = "/events">Unpopular Movie!</a></td>
 								<td>23 May</td>
 								<td>No updates</td>
 							</tr>
-							<tr><td>Soccer Outing</td>
+							<tr><td><a href = "/events">Soccer Outing</a></td>
 								<td>25 May - 2 June</td>
 								<td>2 new respondents</td>
 							</tr>
-							<tr><td>Clubbing Session</td>
+							<tr><td><a href = "/events">Clubbing Session</a></td>
 								<td>28 May - 29 May</td>
 								<td>No Updates</td>
 							</tr>
