@@ -12,10 +12,10 @@
 		<script type="text/javascript" src="../js/bootstrap.min.js"></script>
 	</head>
 	<body>
-<div class = "navbar navbar-inverse">
+		<div class = "navbar navbar-inverse">
 			<div class = "navbar-inner">
 				<div class = "container">
-					<div class = "span4 offset1">
+					<div class = "span3 offset2">
 						<img id="top-logo" src = "../logo/demeetr.png" \>
 						<a href = "/home">
 						<div class = "span2" id = "title">
@@ -30,10 +30,10 @@
 						<span class="icon-bar"></span>
 					</a>
 					<div class = "nav-collapse collapse">
-						<div class = "span4">
-							<input class = "navbar-search" type = "text" name = "search" placeholder = "Search!">
-						</div>
 						<ul class = "nav">
+							<li>
+								<input class = "navbar-search" type = "text" name = "search" placeholder = "Search!">
+							</li>
 							<li><a href = "/help">Help</a></li>
 							<li><a href = "/about">About</a></li>
 							<li><a href = "/contact">Contact Us</a></li>
@@ -47,6 +47,11 @@
 
 			<!--Sidebar-->
 			<div class = "span2 offset2">
+				<div class = "logout">
+					<a href = {{ logout }}>
+					<button class = 'btn btn-warning btn-block'>Logout</button></a>
+					<br>
+				</div>
 				<div class = "tab-list">
 					<a href = "/home">
 						<div class = "side-tab">
@@ -69,7 +74,7 @@
 			<!--Main block-->
 			<div class = "span5 offset1">
 				<div class = "details">
-					<h3>Username</h3>
+					<h3>{{ user_mail }}</h3>
 				</div>
 
 				<div id = "event-list">

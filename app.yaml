@@ -21,21 +21,21 @@ handlers:
 - url: /bootstrap
   static_dir: bootstrap
 
-# - url: /
-#   script: front.app
+- url: /
+  script: front.app
 
-# - url: /about
-#   script: front.app
+- url: /about
+  script: front.app
 
-# - url: /contact
-#   script: front.app
+- url: /contact
+  script: front.app
 
-# - url: /help
-#   script: front.app
+- url: /help
+  script: front.app
 
 - url: /.*
-  script: front.app
- # login: required
+  script: demeetr.app
+  login: required
 
 libraries:
 - name: webapp2

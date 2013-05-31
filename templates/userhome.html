@@ -12,10 +12,10 @@
 		<script type="text/javascript" src="../js/bootstrap.min.js"></script>
 	</head>
 	<body>
-<div class = "navbar navbar-inverse">
+		<div class = "navbar navbar-inverse">
 			<div class = "navbar-inner">
 				<div class = "container">
-					<div class = "span4 offset1">
+					<div class = "span3 offset2">
 						<img id="top-logo" src = "../logo/demeetr.png" \>
 						<a href = "/home">
 						<div class = "span2" id = "title">
@@ -30,10 +30,10 @@
 						<span class="icon-bar"></span>
 					</a>
 					<div class = "nav-collapse collapse">
-						<div class = "span4">
-							<input class = "navbar-search" type = "text" name = "search" placeholder = "Search!">
-						</div>
 						<ul class = "nav">
+							<li>
+								<input class = "navbar-search" type = "text" name = "search" placeholder = "Search!">
+							</li>
 							<li><a href = "/help">Help</a></li>
 							<li><a href = "/about">About</a></li>
 							<li><a href = "/contact">Contact Us</a></li>
@@ -47,6 +47,11 @@
 
 			<!--Sidebar-->
 			<div class = "span2 offset2">
+				<div class = "logout">
+					<a href = {{ logout }}>
+					<button class = 'btn btn-warning btn-block'>Logout</button></a>
+					<br>
+				</div>
 				<div class = "tab-list">
 					<a href = "/home">
 						<div class = "side-tab myactive">
@@ -69,16 +74,18 @@
 			<!--Main block-->
 			<div class = "span5 offset1">
 				<div class = "details">
-					<h3>Username</h3>
+					<h3>{{ user_mail }}</h3>
+
 				</div>
 				<div id = "event-create">
-					<form action="/events" method="get" class="form-inline">
+					<form action="/addevent" method= "post" class = "form-inline">
 						<fieldset>
-							<label>Event title</label>
-							<input class="input-small" type = "text" name = "title" placeholder = "Anything goes">
+							<!-- <label>Event title</label> -->
+							<input class="input-medium" type = "text" name = "event_title" placeholder = "Event Title">
 
-							<label>Enter time range</label>
-							<input class="input-small" type = "text" name = "title" placeholder = "Cast a wide net">
+							<!-- <label>Event Window</label> -->
+							<input class="input-small" type = "datetime" name = "start" placeholder = "Start Date">
+							<input class="input-small" type = "datetime" name = "end" placeholder = "End Date">
 
 							<button type="submit" class="btn">Create Event</button>
 						</fieldset>
@@ -86,31 +93,30 @@
 
 				</div>
 				<div id = "event-list">
-					<table class = "table table-striped table-hover">
-						<thead>
-							<th>Event Title</th>
-							<th>Time</th>
-							<th>Updates</th>
-						</thead>
-						<tbody>
-							<tr class = "success"><td><a href = "/events">Akshat's Fake Birthday</a></td>
-								<td>22 May</td>
-								<td>3 new respondents</td>
-							</tr>
-							<tr class = "error"><td><a href = "/events">Unpopular Movie!</a></td>
-								<td>23 May</td>
-								<td>No updates</td>
-							</tr>
-							<tr><td><a href = "/events">Soccer Outing</a></td>
-								<td>25 May - 2 June</td>
-								<td>2 new respondents</td>
-							</tr>
-							<tr><td><a href = "/events">Clubbing Session</a></td>
-								<td>28 May - 29 May</td>
-								<td>No Updates</td>
-							</tr>
-						</tbody>
-					</table>
+					{% if my_events.count() == 0 %}
+						<div>
+							<h4>You have no events! Why not create one now? </h4>
+						</div>
+					{% else %}
+						<table class = "table table-striped table-hover">
+							
+							<thead>
+								<th>Event Title</th>
+								<th>Start Time</th>
+								<th>End Time</th>
+							</thead>
+
+							<tbody>
+								{% for event in my_events %}
+								<tr>
+									<td>{{ event.title }}</td>
+									<td>{{ event.time_window_start }}</td>
+									<td>{{ event.time_window_end }}</td>
+								</tr>
+								{% endfor %}
+							</tbody>
+						</table>
+					{% endif %}
 				</div>
 			</div>
 
