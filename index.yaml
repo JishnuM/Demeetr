@@ -10,7 +10,18 @@ indexes:
 # automatically uploaded to the admin console when you next deploy
 # your application using appcfg.py.
 
+- kind: Event
+  properties:
+  - name: __empty_IN_list__
+  - name: created_time
+
 - kind: User
   properties:
   - name: __empty_IN_list__
   - name: created_time
+
+- kind: User
+  ancestor: yes
+  properties:
+  - name: date
+    direction: desc
