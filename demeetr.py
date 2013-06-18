@@ -27,17 +27,17 @@ class Event(db.Model):
 	best_time = db.DateTimeProperty()
 	time_window_start = db.StringProperty()
 	time_window_end = db.StringProperty()
-	place_list = db.ListProperty(str)
-	place_vote_list = db.ListProperty(int)
 	raw_time_list = db.ListProperty(str)
 	overall_time_chart = db.ListProperty(str)
 	confirmed = db.BooleanProperty()
 
 class Option(db.Model):
+	title = db.StringProperty()
 	description = db.StringProperty()
 	place = db.StringProperty()
 	duration = db.FloatProperty()
 	minimum = db.IntegerProperty()
+	votes = db.IntegerProperty()
 
 
 class HomePage(webapp2.RequestHandler):
@@ -90,7 +90,22 @@ class Events(webapp2.RequestHandler):
 								"WHERE __key__ IN :1 "
 								"ORDER BY created_time ASC",
 								 key_list)
+
+			option_query = db.GqlQuery("SELECT * "
+										"FROM Option "
+										"WHERE ANCESTOR IS :1 "
+										"ORDER BY votes DESC",
+										event_key)
+
+			total_votes = 0
+			for option in option_query:
+				total_votes += option.votes
+			if total_votes == 0:
+				total_votes = 1
+
 			template_values = {
+			'total_votes' : total_votes,
+			'options' : option_query,
 			'user' : person,
 			'my_events' : query,
 			'event' : event,
@@ -124,6 +139,28 @@ class AddEvent(webapp2.RequestHandler):
 		person.put()
 
 		self.redirect('/events?id=' + str(event.key().id()))
+
+class AddOption(webapp2.RequestHandler):
+	def post(self):
+		event_id = int(self.request.get('event_id'))
+		event_key = db.Key.from_path('Event',event_id)
+		event = db.get(event_key)
+
+		if event == None:
+			self.redirect('/')
+
+		curr_option = Option(parent=event_key)
+		curr_option.title = self.request.get('title')
+		curr_option.description = self.request.get('desc')
+		curr_option.place = self.request.get('place')
+		curr_option.duration = float(self.request.get('duration'))
+		curr_option.minimum = int(self.request.get('min'))
+		curr_option.votes = 0
+
+		curr_option.put()
+
+		self.redirect('/events?id=' + str(event.key().id()))
+
 
 class Profile(webapp2.RequestHandler):
 	def get(self):
@@ -233,6 +270,20 @@ class Messages(webapp2.RequestHandler):
 		else:
 			self.redirect(users.create_login_url(self.request.uri))
 
+class Vote(webapp2.RequestHandler):
+	def post(self):
+		event_id = int(self.request.get('event_id'))
+		event_key = db.Key.from_path('Event',event_id)
+		option_id = int(self.request.get('option_id'))
+		option_key = db.Key.from_path('Option',option_id,parent=event_key)
+		option = db.get(option_key)
+
+		option.votes += 1
+
+		option.put()
+
+		self.redirect('/events?id=' + str(event_id))
+
 
 app = webapp2.WSGIApplication([('/home',HomePage),
 								('/messages',Messages),
@@ -241,6 +292,8 @@ app = webapp2.WSGIApplication([('/home',HomePage),
 								('/events',Events),
 								('/search',UserSearch),
 								('/invite',Invite),
+								('/addoption',AddOption),
 								('/addfriend',AddFriend),
+								('/eventvote',Vote),
 								('/addevent',AddEvent)],
 								debug = True)

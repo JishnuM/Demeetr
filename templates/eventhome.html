@@ -105,10 +105,10 @@
 					<h5>Invited: {{ invited }}</h5>
 					<h5>Responded: {{ responded }}</h5>
 					<h5>Possible: { num_confirmed }</h5>
-					<a href="#myModal" role="button" class="btn" data-toggle="modal">Invite Friends!</a>
+					<a href="#addtoevent" role="button" class="btn btn-warning" data-toggle="modal">Invite Friends!</a>
 				</div>
 
-				<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+				<div id="addtoevent" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 					<div class="modal-header">
 						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
 						<h3 id="myModalLabel">Add Friends to Your Event!</h3>
@@ -131,7 +131,7 @@
 									{% endif %}
 								{% endfor %}
 								<input type = "hidden" name = "event_id" value = {{ event.key().id() }}>
-								<button type="submit" class="btn">Invite</button>
+								<button type="submit" class="btn btn-warning">Invite</button>
 							</fieldset>
 						</form>
 						{% endif %}
@@ -143,24 +143,58 @@
 
 
 				<div class = "row-fluid event-box">
-					<h4>The Place</h4>
-					<strong>{ choices[0] }</strong><span class = "pull-right">{ votes[0] }
-					<input type = "button" value = "Vote" class = "btn"></button></span>
+					<h4>Make a Choice</h4>
+					<h5>Or more than one, we don't judge</h5>
+					{% for option in options %}
+					<form action = "/eventvote" method = "post">
+					<strong>{{ option.title }}</strong><span class = "pull-right">{{ option.votes }}
+						<input type = "hidden" name = "event_id" value = {{ event.key().id() }}>
+						<input type = "hidden" name = "option_id" value = {{ option.key().id() }}>
+						<input type = "submit" value = "Vote" class = "btn btn-warning"></span>
+
+					</form>
+
 					<div class = "progress progress-info">
-						<div class = "bar" style = "width: 30%;"></div><!--{ votes[0]/num_responded }-->
+					{% set percentage = option.votes*100 / total_votes %}
+						<div class = "bar" style = "width: {{percentage}}%;"></div><!--{ votes[0]/num_responded }-->
 					</div>
-					<strong>{ choices[1] }</strong><span class = "pull-right">{ votes[1] }
-					<input type = "button" value = "Vote" class = "btn"></button></span>
-					<div class = "progress progress-success">
-						<div class = "bar" style = "width: 80%;"></div><!--{ votes[1]/num_responded }-->
-					</div>
-					<strong>{ choices[2] }</strong><span class = "pull-right">{ votes[2] }
-					<input type = "button" value = "Vote" class = "btn"></button></span>
-					<div class = "progress progress-info">
-						<div class = "bar" style = "width: 60%;"></div><!--{ votes[2]/num_responded }-->
-					</div>
-					<input type = "button" value = "Suggest New Place" class = "btn"></button>
+					{% endfor %}
+					<a href="#addoption" role="button" class="btn btn-warning" data-toggle="modal">Suggest New Option</a>
 				</div>
+
+				<div id="addoption" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+						<h3 id="myModalLabel">Add a new option!</h3>
+					</div>
+					<div class="modal-body">
+						<form action = "addoption" method = "post">
+							<fieldset>
+								<label>Title</label>
+								<input type="text" name = "title" placeholder="Short and snappy" required>
+
+								<label>Description</label>
+								<textarea rows = "3" name = "desc" placeholder="Details details details"></textarea>
+
+								<label>Place</label>
+								<input type="text" name = "place" placeholder="Where it's gonna be at" required>
+
+								<label>Duration (in hours:)</label>
+								<input type = "number" name = "duration" required>
+
+								<label>Minimum</label>
+								<input type = "number" name = "min">
+
+							<input type = "hidden" name = "event_id" value = {{ event.key().id() }}>
+							<button type="submit" class="btn btn-warning">Add Option</button>
+							</fieldset>
+						</form>
+					</div>
+					 <div class="modal-footer">
+						<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+					</div>
+				</div>
+
 				<!--When-->
 				<div class = "row-fluid event-box">
 					<h4>The Time</h4>

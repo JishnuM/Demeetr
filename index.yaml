@@ -15,6 +15,12 @@ indexes:
   - name: __empty_IN_list__
   - name: created_time
 
+- kind: Option
+  ancestor: yes
+  properties:
+  - name: votes
+    direction: desc
+
 - kind: User
   properties:
   - name: __empty_IN_list__

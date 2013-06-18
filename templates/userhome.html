@@ -7,9 +7,12 @@
 		<link href = "../bootstrap/bootstrap.css" rel="stylesheet">
 		<link href = "../bootstrap/bootstrap-responsive.css" rel="stylesheet">
 		<link href = "../css/main.css" rel="stylesheet">
-		<script type="text/javascript" src="../js/jquery-1.9.1.min.js"></script>
+		<link href="http://code.jquery.com/ui/1.10.3/themes/sunny/jquery-ui.css" rel="stylesheet"></link>
+		<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+		<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
 		<script type="text/javascript" src="../js/demeetr.js"></script>
 		<script type="text/javascript" src="../js/bootstrap.min.js"></script>
+
 	</head>
 	<body>
 		<div class = "navbar navbar-inverse">
@@ -91,8 +94,8 @@
 							<input class="input-medium" type = "text" name = "event_title" placeholder = "Event Title" required>
 
 							<!-- <label>Event Window</label> -->
-							<input class="input-small" type = "datetime" name = "start" placeholder = "Start Date" required>
-							<input class="input-small" type = "datetime" name = "end" placeholder = "End Date" required>
+							<input id = "startdate" class = "input-small"type = "text" name = "start" placeholder = "Start Date" required>
+							<input id = "enddate" class = "input-small" type = "text" name = "end" placeholder = "End Date" required>
 
 							<button type="submit" class="btn">Create Event</button>
 						</fieldset>
