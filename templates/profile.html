@@ -49,7 +49,7 @@
 			<!--Sidebar-->
 			<div class = "span2 offset2">
 				<div class = "logout">
-					<a href = {{ logout }}>
+					<a href = 'logout'>
 					<button class = 'btn btn-warning btn-block'>Logout</button></a>
 					<br>
 				</div>
@@ -89,7 +89,7 @@
 					<h4> Your Friends </h4>
 					{% if user.friends_list|length == 0 %}
 						<div>
-							<h4>You have no friends! You poor lonely soul - add some using our search bar! </h4>
+							<h5>You have no friends! You poor lonely soul - add some using our search bar! </h5>
 						</div>
 					{% else %}
 						<table class = "table table-striped table-hover">
@@ -107,6 +107,8 @@
 							</tbody>
 						</table>
 					{% endif %}
+					<br>
+					<h4>
 				</div>
 			</div>
 
