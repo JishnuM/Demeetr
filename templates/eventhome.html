@@ -150,8 +150,11 @@
 					<strong>{{ option.title }}</strong><span class = "pull-right">{{ option.votes }}
 						<input type = "hidden" name = "event_id" value = {{ event.key().id() }}>
 						<input type = "hidden" name = "option_id" value = {{ option.key().id() }}>
-						<input type = "submit" value = "Vote" class = "btn btn-warning"></span>
-
+						{% if can_vote[loop.index0] %} 
+							<input type = "submit" value = "Vote" class = "btn btn-warning"></span>
+						{% else %}
+							<input type = "submit" value = "Voted!" class = "btn btn-warning" disabled></span>
+						{% endif %}
 					</form>
 
 					<div class = "progress progress-info">

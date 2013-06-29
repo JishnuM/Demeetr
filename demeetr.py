@@ -168,6 +168,7 @@ class Option(db.Model):
 	duration = db.FloatProperty()
 	minimum = db.IntegerProperty()
 	votes = db.IntegerProperty()
+	voters = db.ListProperty(db.Email)
 
 class BaseHandler(webapp2.RequestHandler):
 	def auth(self):
@@ -314,6 +315,13 @@ class Events(BaseHandler):
 										"ORDER BY votes DESC",
 										event_key)
 
+			can_vote = []
+			for option in option_query:
+				if user.email in option.voters:
+					can_vote.append(False)
+				else:
+					can_vote.append(True)
+
 			total_votes = 0
 			for option in option_query:
 				total_votes += option.votes
@@ -327,6 +335,7 @@ class Events(BaseHandler):
 			'my_events' : query,
 			'event' : event,
 			'user_mail' : user.email,
+			'can_vote' : can_vote
 			# 'logout' : users.create_logout_url(self.request.host_url)
 			}
 			template = jinja_environment.get_template('eventhome.html')
@@ -518,15 +527,17 @@ class Messages(BaseHandler):
 class Vote(BaseHandler):
 	def post(self):
 		if self.user_info:
+			user = self.get_user()
 			event_id = int(self.request.get('event_id'))
 			event_key = db.Key.from_path('Event',event_id)
 			option_id = int(self.request.get('option_id'))
 			option_key = db.Key.from_path('Option',option_id,parent=event_key)
 			option = db.get(option_key)
 
-			option.votes += 1
-
-			option.put()
+			if user.email not in option.voters:
+				option.voters.append(user.email)
+				option.votes += 1
+				option.put()
 
 			self.redirect('/events?id=' + str(event_id))
 		else:
