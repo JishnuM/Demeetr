@@ -277,8 +277,7 @@ class HomePage(BaseHandler):
 								 key_list)
 			template_values = {
 			'my_events' : query,
-			'user_mail': user.email,
-			'username': user.name,
+			'user': user,
 			# 'logout': users.create_logout_url(self.request.host_url),
 			}
 			template = jinja_environment.get_template('userhome.html')
@@ -454,8 +453,8 @@ class AddFriend(BaseHandler):
 			add_key = db.Key.from_path('User',add_email)
 			added_user = db.get(add_key)
 
-			current_user.friends_list.append(added_user.email)
-			current_user.put()
+			user.friends_list.append(added_user.email)
+			user.put()
 
 			added_user.friends_list.append(user.email)
 			added_user.put()
@@ -479,7 +478,7 @@ class UserSearch(BaseHandler):
 			template_values = {
 				'target_user': target_user,
 				'target': search_item,
-				'user_mail': users.get_current_user().email(),
+				'user_mail': user.email,
 				'current_user': user,
 				# 'logout': users.create_logout_url(self.request.host_url),
 			}
@@ -497,7 +496,7 @@ class Settings(BaseHandler):
 			# if user:
 			user = self.get_user()
 			template_values = {
-			'user_mail': user.email,
+			'user': user
 			# 'logout' : users.create_logout_url(self.request.host_url)
 			}
 			template = jinja_environment.get_template('usersettings.html')
@@ -514,7 +513,7 @@ class Messages(BaseHandler):
 		if self.user_info:
 			user = self.get_user()
 			template_values = {
-			'user_mail': user.email,
+			'user': user
 			# 'logout' : users.create_logout_url(self.request.host_url)
 			}
 			template = jinja_environment.get_template('usermsgs.html')
