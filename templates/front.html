@@ -51,11 +51,16 @@
 				</div>
 			</div>
 			<div class = "span3 offset1" id="main-right">
-				{% if fail %}
+				{% if fail_login %}
 					<div class = "alert alert-error">
 						Oops - Either the email id or the password is invalid
 					</div>
 				{% endif %}
+				{% if fail_signup %}
+					<div class = "alert alert-error">
+						Oops - Looks like you already have an account here!
+					</div>
+				{% endif %}				
 				<!--Left-->
 				<ul id = "myTab" class = "nav nav-tabs">
 					<li class = ""><a data-toggle="tab" href="#new">New User</a></li>

@@ -214,7 +214,7 @@ class Signup(BaseHandler):
 		email = self.request.get('email')
 		password = self.request.get('password')
 
-		test_key = db.Key.from_path('User','email')
+		test_key = db.Key.from_path('User',email)
 		test_user = db.get(test_key)
 		if test_user == None:
 			newUser = User(key_name = email)
@@ -234,7 +234,7 @@ class Signup(BaseHandler):
 
 			self.redirect('/home')
 		else:
-			self.redirect('/')
+			self.redirect('/?src=fail_signup')
 
 class Login(BaseHandler):
 	def post(self):
@@ -244,7 +244,7 @@ class Login(BaseHandler):
 			u = self.auth().get_user_by_password(email,password,remember=True)
 			self.redirect('/home')
 		except (auth.InvalidAuthIdError, auth.InvalidPasswordError) as e:
-			self.redirect('/?src=fail')
+			self.redirect('/?src=fail_login')
 
 class Logout(BaseHandler):
 	def get(self):
@@ -267,7 +267,7 @@ class HomePage(BaseHandler):
 		# 	newUser.put()
 
 		# user = db.get(parent_key)
-		if self.user_info:
+		if self.user_info():
 			user = self.get_user()
 			key_list = user.event_key_list
 			query = db.GqlQuery("SELECT * "
@@ -291,7 +291,7 @@ class Events(BaseHandler):
 	def get(self):
 		# user = users.get_current_user()
 		# if user:
-		if self.user_info:
+		if self.user_info():
 			my_id = int(self.request.get('id'))
 			event_key = db.Key.from_path('Event',my_id)
 			event = db.get(event_key)
@@ -350,7 +350,7 @@ class AddEvent(BaseHandler):
 		# user = db.get(parent_key)
 		# if user == None:
 		# 	self.redirect('/')
-		if self.user_info:
+		if self.user_info():
 			user = self.get_user()
 			event = Event()
 			event.title = self.request.get('event_title')
@@ -372,7 +372,7 @@ class AddEvent(BaseHandler):
 
 class AddOption(BaseHandler):
 	def post(self):
-		if self.user_info:
+		if self.user_info():
 			event_id = int(self.request.get('event_id'))
 			event_key = db.Key.from_path('Event',event_id)
 			event = db.get(event_key)
@@ -401,7 +401,7 @@ class Profile(BaseHandler):
 		# if user:
 		# user_key = db.Key.from_path('User',user.email())
 		# our_user = db.get(user_key)
-		if self.user_info:
+		if self.user_info():
 			user = self.get_user()
 			template_values = {
 			'user':user,
@@ -419,7 +419,7 @@ class Invite(BaseHandler):
 	def post(self):
 		# current_user_key = db.Key.from_path('User',users.get_current_user().email())
 		# current_user = db.get(current_user_key)
-		if self.user_info:
+		if self.user_info():
 			current_user = self.get_user()
 
 			add_email_list = self.request.get_all('invited[]')
@@ -446,7 +446,7 @@ class AddFriend(BaseHandler):
 	def post(self):
 		# current_user_key = db.Key.from_path('User',users.get_current_user().email())
 		# current_user = db.get(current_user_key)
-		if self.user_info:
+		if self.user_info():
 			user = self.get_user()
 
 			add_email = self.request.get('add_email')
@@ -466,7 +466,7 @@ class AddFriend(BaseHandler):
 
 class UserSearch(BaseHandler):
 	def post(self):
-		if self.user_info:
+		if self.user_info():
 			search_item = self.request.get('search').rstrip()
 			search_key = db.Key.from_path('User',search_item)
 			target_user = db.get(search_key)
@@ -491,7 +491,7 @@ class UserSearch(BaseHandler):
 
 class Settings(BaseHandler):
 	def get(self):
-		if self.user_info:
+		if self.user_info():
 			# user = users.get_current_user()
 			# if user:
 			user = self.get_user()
@@ -510,7 +510,7 @@ class Messages(BaseHandler):
 	def get(self):
 		# user = users.get_current_user()
 		# if user:
-		if self.user_info:
+		if self.user_info():
 			user = self.get_user()
 			template_values = {
 			'user': user
@@ -525,7 +525,7 @@ class Messages(BaseHandler):
 
 class Vote(BaseHandler):
 	def post(self):
-		if self.user_info:
+		if self.user_info():
 			user = self.get_user()
 			event_id = int(self.request.get('event_id'))
 			event_key = db.Key.from_path('Event',event_id)
@@ -551,13 +551,18 @@ class Unauth(BaseHandler):
 
 class FrontPage(BaseHandler):
     def get(self):
-    	template = jinja_environment.get_template('front.html')
-    	src = self.request.get('src')
-    	if src == 'fail':
-    		template_values = {'fail':True}
+    	if self.user_info():
+    		self.redirect('/home')
     	else:
-    		template_values = {'fail':False}
-    	self.response.out.write(template.render(template_values))
+	    	template = jinja_environment.get_template('front.html')
+	    	src = self.request.get('src')
+	    	if src == 'fail_login':
+	    		template_values = {'fail_login':True,'fail_signup':False}
+	    	elif src == 'fail_signup':
+	    		template_values = {'fail_login':False,'fail_signup':True}
+	    	else:
+	    		template_values = {'fail_login':False,'fail_signup':False}
+	    	self.response.out.write(template.render(template_values))
 
 class About(BaseHandler):
     def get(self):
