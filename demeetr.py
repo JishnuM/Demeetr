@@ -325,6 +325,7 @@ class Events(BaseHandler):
 			else:
 				event.confirmed = False
 				event.best_option_key = None
+				best_option = None
 			event.put()
 
 			can_vote = []
