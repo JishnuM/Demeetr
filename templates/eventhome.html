@@ -87,9 +87,10 @@
 					<div class = "span5 offset1">
 						<div class = "row-fluid" id="status-box">
 						{% if event.confirmed %}
-							<h4> Confirmed at</h4>
-							<h5>{ max(votes) }</h5>
-							<h5>{ best_time }</h5>
+							<h4> Tentatively Confirmed!</h4>
+							<h5>{{ best.title }} at</h5>
+							<h5>{{ best.place }}</h5>
+							<h5>with {{ best.votes }} votes</h5>
 						{% else %}
 						<br>
 							<h4>Not Confirmed Yet</h4>

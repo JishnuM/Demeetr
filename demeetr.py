@@ -153,7 +153,7 @@ class Event(db.Model):
 	title = db.StringProperty()
 	invitees = db.ListProperty(db.Email)
 	respondents = db.ListProperty(db.Email)
-	best_place = db.StringProperty()
+	best_option_key = db.ReferenceProperty()
 	best_time = db.DateTimeProperty()
 	time_window_start = db.StringProperty()
 	time_window_end = db.StringProperty()
@@ -169,6 +169,7 @@ class Option(db.Model):
 	minimum = db.IntegerProperty()
 	votes = db.IntegerProperty()
 	voters = db.ListProperty(db.Email)
+	satisfied = db.BooleanProperty()
 
 class BaseHandler(webapp2.RequestHandler):
 	def auth(self):
@@ -313,6 +314,18 @@ class Events(BaseHandler):
 										"WHERE ANCESTOR IS :1 "
 										"ORDER BY votes DESC",
 										event_key)
+			satisfied = []
+			for option in option_query:
+				if option.satisfied:
+					satisfied.append(option)
+			if satisfied:
+				event.confirmed = True
+				best_option = satisfied[0]
+				event.best_option_key = best_option.key()
+			else:
+				event.confirmed = False
+				event.best_option_key = None
+			event.put()
 
 			can_vote = []
 			for option in option_query:
@@ -334,7 +347,8 @@ class Events(BaseHandler):
 			'my_events' : query,
 			'event' : event,
 			'user_mail' : user.email,
-			'can_vote' : can_vote
+			'can_vote' : can_vote,
+			'best': best_option
 			# 'logout' : users.create_logout_url(self.request.host_url)
 			}
 			template = jinja_environment.get_template('eventhome.html')
@@ -387,6 +401,7 @@ class AddOption(BaseHandler):
 			curr_option.duration = float(self.request.get('duration'))
 			curr_option.minimum = int(self.request.get('min'))
 			curr_option.votes = 0
+			curr_option.satisfied = (curr_option.votes >= curr_option.minimum)
 
 			curr_option.put()
 
@@ -479,7 +494,7 @@ class UserSearch(BaseHandler):
 				'target_user': target_user,
 				'target': search_item,
 				'user_mail': user.email,
-				'current_user': user,
+				'user': user,
 				# 'logout': users.create_logout_url(self.request.host_url),
 			}
 
@@ -536,6 +551,7 @@ class Vote(BaseHandler):
 			if user.email not in option.voters:
 				option.voters.append(user.email)
 				option.votes += 1
+				option.satisfied = (option.votes >= option.minimum)
 				option.put()
 
 			self.redirect('/events?id=' + str(event_id))
