@@ -22,20 +22,19 @@ handlers:
   static_dir: bootstrap
 
 - url: /
-  script: front.app
+  script: demeetr.app
 
-- url: /about
-  script: front.app
+- url: /signup
+  script: demeetr.app
+  secure: always
 
-- url: /contact
-  script: front.app
-
-- url: /help
-  script: front.app
+- url: /login
+  script: demeetr.app
+  secure: always
 
 - url: /.*
   script: demeetr.app
-  login: required
+  # login: required
 
 libraries:
 - name: webapp2

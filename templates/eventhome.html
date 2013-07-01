@@ -53,8 +53,8 @@
 		<div class = "row-fluid">
 			<div class = "span2 offset2">
 				<div class = "logout">
-					<h5>{{ event.key().id() }}</h5>
-					<a href = {{ logout }}>
+					<h5>{{ user.name }}</h5>
+					<a href = '/logout'>
 					<button class = 'btn btn-warning btn-block'>Logout</button></a>
 					<br>
 				</div>
@@ -93,9 +93,10 @@
 					<div class = "span5 offset1">
 						<div class = "row-fluid" id="status-box">
 						{% if event.confirmed %}
-							<h4> Confirmed at</h4>
-							<h5>{ max(votes) }</h5>
-							<h5>{ best_time }</h5>
+							<h4> Tentatively Confirmed!</h4>
+							<h5>{{ best.title }} at</h5>
+							<h5>{{ best.place }}</h5>
+							<h5>with {{ best.votes }} votes</h5>
 						{% else %}
 						<br>
 							<h4>Not Confirmed Yet</h4>
@@ -156,8 +157,11 @@
 					<strong>{{ option.title }}</strong><span class = "pull-right">{{ option.votes }}
 						<input type = "hidden" name = "event_id" value = {{ event.key().id() }}>
 						<input type = "hidden" name = "option_id" value = {{ option.key().id() }}>
-						<input type = "submit" value = "Vote" class = "btn btn-warning"></span>
-
+						{% if can_vote[loop.index0] %} 
+							<input type = "submit" value = "Vote" class = "btn btn-warning"></span>
+						{% else %}
+							<input type = "submit" value = "Voted!" class = "btn btn-warning" disabled></span>
+						{% endif %}
 					</form>
 
 					<div class = "progress progress-info">

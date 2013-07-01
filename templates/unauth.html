@@ -1,8 +1,6 @@
-<!--Front page for Events-->
-<!DOCTYPE HTML>
 <html>
 	<head>
-		<title>Demeetr</title>
+		<title>Help</title>
 		<meta name="viewport" content="width-device-width, initial-scale=1.0">
 		<link href = "../bootstrap/bootstrap.css" rel="stylesheet">
 		<link href = "../bootstrap/bootstrap-responsive.css" rel="stylesheet">
@@ -42,25 +40,14 @@
 				</div>
 			</div>
 		</div>
-
 		<div class="row-fluid" id = "body-row">
 			<div class = "span4 offset2" id="main-left">
 				<div>
 					<img id = "home-image" src = "../logo/people.png" />
-					<h3 align="center">A natural way to organize meetups</h3>
+					<h3 align="center">Oops! The page you tried to view needs you to be logged in!</h3>
 				</div>
 			</div>
 			<div class = "span3 offset1" id="main-right">
-				{% if fail_login %}
-					<div class = "alert alert-error">
-						Oops - Either the email id or the password is invalid
-					</div>
-				{% endif %}
-				{% if fail_signup %}
-					<div class = "alert alert-error">
-						Oops - Looks like you already have an account here!
-					</div>
-				{% endif %}				
 				<!--Left-->
 				<ul id = "myTab" class = "nav nav-tabs">
 					<li class = ""><a data-toggle="tab" href="#new">New User</a></li>
@@ -138,9 +125,6 @@
 							</form>
 						</div>
 				</div>
-			</div>
 		</div>
 	</body>
 </html>
-
-		

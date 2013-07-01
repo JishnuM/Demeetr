@@ -50,7 +50,8 @@
 			<!--Sidebar-->
 			<div class = "span2 offset2">
 				<div class = "logout">
-					<a href = {{ logout }}>
+					<h5>{{ user.name }}</h5>
+					<a href = '/logout'>
 					<button class = 'btn btn-warning btn-block'>Logout</button></a>
 					<br>
 				</div>
@@ -77,13 +78,13 @@
 							<tbody>
 								<tr>
 									<td>{{ target_user.email }}</td>
-									{% if target_user.email in current_user.friends_list %}
+									{% if target_user.email in user.friends_list %}
 										<td>Friend</td>
 									{% else %}
 										<td>
 											<form action = "/addfriend" method = "post">
 												<input type = "hidden" name = "add_email" value = {{ target_user.email }}>
-												<input type = "submit" value = "add">
+												<input type = "submit" class = 'btn btn-warning' value = "Add">
 											</input>
 										</td>
 									{% endif %}
