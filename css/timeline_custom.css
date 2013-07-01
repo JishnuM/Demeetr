@@ -1,0 +1,67 @@
+#mytimeline {
+    height: 200px;
+    width: 700px;
+}
+
+#alltimelines {
+    height: 200px;
+    width: 700px;
+}
+
+/*#new {
+    position: relative;
+    left: 25px; 
+    top: 8px;
+
+    text-transform: uppercase;
+    color: white;
+    font-weight: bold;
+    font-size: 40px;
+    text-decoration: none;
+}*/
+
+    /* Custom styles for the Timeline */
+div.timeline-frame {
+    border-color: #5D99C3;
+
+    border-radius: 5px;
+    -moz-border-radius: 5px; /* For Firefox 3.6 and older */
+}
+ div.timeline-axis {
+    border-color: #FBB450;
+    background-color: #FBB450;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FBB450', endColorstr='#F89406'); /* for IE */
+    background: -webkit-gradient(linear, left top, left bottom, from(#FBB450), to(#F89406)); /* for webkit browsers */
+    background: -moz-linear-gradient(top,  #FBB450,  #F89406); /* for firefox 3.6+ */
+    }
+div.timeline-axis-grid {
+}
+div.timeline-groups-axis {
+    border-color: #5D99C3;
+}
+div.timeline-axis-text {
+    color: white;
+}
+div.timeline-groups-text {
+    color: #4D4D4D;
+}
+div.timeline-event {
+    color: white;
+    border-radius: 5px;
+}
+div.timeline-event-content {
+    padding: 5px;
+}
+
+div.unavailable {
+    background-color: #F03030; /* red */
+    border-color: #bd2828;     /* red */
+}
+div.available {
+    background-color: #1AA11A; /* green */
+    border-color: #136e13;     /* green */
+}
+div.maybe {
+    background-color: #FFA500; /* orange */
+    border-color: #cc8100;     /* orange */
+}

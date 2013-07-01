@@ -3,15 +3,21 @@
 <html>
 	<head>
 		<title>Event-title</title>
-		<meta name="viewport" content="width-device-width, initial-scale=1.0">
-		<link href = "../bootstrap/bootstrap.css" rel="stylesheet">
-		<link href = "../bootstrap/bootstrap-responsive.css" rel="stylesheet">
-		<link href = "../css/main.css" rel="stylesheet">
+		<meta name="viewport" content="width-device-width, initial-scale=1.0"/>
+		<link href = "../bootstrap/bootstrap.css" rel="stylesheet"/>
+		<link href = "../bootstrap/bootstrap-responsive.css" rel="stylesheet"/>
+		<link href = "../css/main.css" rel="stylesheet"/>
 		<script type="text/javascript" src="../js/jquery-1.9.1.min.js"></script>
 		<script type="text/javascript" src="../js/demeetr.js"></script>
 		<script type="text/javascript" src="../js/bootstrap.min.js"></script>
+		<!--timeline related-->
+		<script type="text/javascript" src="http://www.google.com/jsapi"></script>
+		<script type="text/javascript" src="../js/timeline.js"></script>
+		<link rel="stylesheet" type="text/css" href="../css/timeline.css">
+		<script type="text/javascript" src="../js/timeline_custom.js"></script>
+		<link rel="stylesheet" type="text/css" href="../css/timeline_custom.css">
 	</head>
-	<body>
+	<body onresize="timeline.redraw();">
 		<div class = "navbar navbar-inverse">
 			<div class = "navbar-inner">
 				<div class = "container">
@@ -203,7 +209,7 @@
 						<h5>Recommended Time: { best_time }</h5>
 						<h6>{ num_possible } can make it.</h6>
 						<h5>Overall Time Chart</h5>
-						<table class = "table" >
+						<!-- <table class = "table" >
 							<tbody>
 								<tr class = "day">
 									<td colspan = "12" class = "bad"></td>
@@ -222,12 +228,16 @@
 									<td colspan = "8" class = "bad"></td>
 								</tr>
 							</tbody>
-						</table>
+						</table> -->
+						<div id="alltimelines"></div>
 					</div>
 
 					<div class = "timebar">
-						<h5>Your Current Availability</h5><input type = "button" value = "Update" class = "btn"></button>
-						<table class = "table" >
+						<h5>Your Current Availability</h5>
+						<a id="new" title="Add new status event" href="javascript:void(0);" onclick="onNew();">
+							<input type = "button" value = "Update" class = "btn"></button>
+						</a>
+						<!-- <table class = "table" >
 							<tbody>
 								<tr class = "day">
 									<td colspan = "24" class = "bad"></td>
@@ -243,7 +253,8 @@
 									<td colspan = "4" class = "bad"></td>
 								</tr>
 							</tbody>
-						</table>
+						</table> -->
+						<div id="mytimeline"></div>
 					</div>
 
 				</div>
