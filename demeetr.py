@@ -3,6 +3,10 @@ import time
 import jinja2
 import os
 import datetime
+import urllib
+import cgi
+import json
+import logging
 
 # from google.appengine.api import users
 from google.appengine.ext import db
@@ -13,6 +17,11 @@ from webapp2_extras import sessions
 
 jinja_environment = jinja2.Environment(
 	loader = jinja2.FileSystemLoader(os.path.dirname(__file__) + "/templates"))
+
+#CONSTANTS
+
+FACEBOOK_APP_ID = 159729634211589
+FACEBOOK_APP_SECRET = '5cc790402a831637da35937603ee4f33'
 
 # Model definitions
 
@@ -62,6 +71,7 @@ class User(db.Model):
 	updated = db.DateTimeProperty(auto_now=True)
 	password = db.StringProperty()
 	auth_id = db.StringProperty()
+	fb_token = db.StringProperty()
 
 
 	def get_id(self):
@@ -84,8 +94,8 @@ class User(db.Model):
 		return db.get(key)
 
 	@classmethod
-	def get_by_auth_token(cls, user_id, token):
-		token_key = cls.token_model.get_key(user_id,'auth',token)
+	def get_by_auth_token(cls, user_id, token, subject='auth'):
+		token_key = cls.token_model.get_key(user_id,subject,token)
 		user_key = db.Key.from_path('User',user_id)
 
 		valid_token = db.get(token_key)
@@ -210,6 +220,8 @@ class BaseHandler(webapp2.RequestHandler):
 
 
 class Signup(BaseHandler):
+	def get(self):
+		self.redirect('/')
 	def post(self):
 		username = self.request.get('username')
 		email = self.request.get('email')
@@ -224,7 +236,7 @@ class Signup(BaseHandler):
 			newUser.password = security.generate_password_hash(password,length=12)
 			newUser.friends_list = []
 			newUser.event_key_list = []
-			newUser.auth_id = 'email'
+			newUser.auth_id = email
 			newUser.put()
 
 			# user_id = newUser.get_id()
@@ -238,6 +250,8 @@ class Signup(BaseHandler):
 			self.redirect('/?src=fail_signup')
 
 class Login(BaseHandler):
+	def get(self):
+		self.redirect('/')
 	def post(self):
 		email = self.request.get('email')
 		password = self.request.get('password')
@@ -255,19 +269,6 @@ class Logout(BaseHandler):
 class HomePage(BaseHandler):
 	def get(self):
 
-		# user = users.get_current_user()
-		# if user:
-		# parent_key = db.Key.from_path('User',user.email())
-		# user = db.get(parent_key)
-		# if user == None:
-		# 	newUser = User(key_name=user.email())
-		# 	newUser.email = user.email()
-		# 	newUser.name = user.nickname()
-		# 	newUser.friends_list = []
-		# 	newUser.event_key_list = []
-		# 	newUser.put()
-
-		# user = db.get(parent_key)
 		if self.user_info():
 			user = self.get_user()
 			key_list = user.event_key_list
@@ -279,19 +280,14 @@ class HomePage(BaseHandler):
 			template_values = {
 			'my_events' : query,
 			'user': user,
-			# 'logout': users.create_logout_url(self.request.host_url),
 			}
 			template = jinja_environment.get_template('userhome.html')
 			self.response.out.write(template.render(template_values))
 		else:
 			self.redirect('/unauth')
-		# else:
-		# 	self.redirect(users.create_login_url(self.request.uri))
 
 class Events(BaseHandler):
 	def get(self):
-		# user = users.get_current_user()
-		# if user:
 		if self.user_info():
 			my_id = int(self.request.get('id'))
 			event_key = db.Key.from_path('Event',my_id)
@@ -559,6 +555,49 @@ class Vote(BaseHandler):
 		else:
 			self.redirect('/unauth')
 
+class FbLoginHandler(BaseHandler):
+	def get(self):
+		args = dict(client_id=FACEBOOK_APP_ID, redirect_uri="http://demeetr.appspot.com/fbauth",scope='email')
+		self.redirect("https://graph.facebook.com/oauth/authorize?" + 
+									urllib.urlencode(args))
+
+class FbAuthHandler(BaseHandler):
+	def get(self):
+		args = dict(client_id=FACEBOOK_APP_ID, redirect_uri="http://demeetr.appspot.com/fbauth",scope='email')
+		args['client_secret'] = FACEBOOK_APP_SECRET
+		args['code'] = self.request.get('code')
+		#Confirming Identity
+		response = cgi.parse_qs(urllib.urlopen(
+    					"https://graph.facebook.com/oauth/access_token?" +
+    					 urllib.urlencode(args)).read())
+		#Generating Access Token
+		access_token = response["access_token"][-1]
+
+		#Validating Access Token (Use App Token)
+
+		profile = json.load(urllib.urlopen(
+							"https://graph.facebook.com/me?" + 
+							urllib.urlencode(dict(access_token=access_token))))
+		email = profile["email"]
+		test_key = db.Key.from_path('User',email)
+		test_user = db.get(test_key)
+		# self.auth().unset_session()
+		if test_user == None:
+			newUser = User(key_name = email)
+			newUser.email = email
+			newUser.name = profile["name"]
+			newUser.event_key_list = []
+			newUser.auth_id = email
+			newUser.fb_token = access_token
+			newUser.put()
+		# 	token = UserToken.create(newUser,'facebook',access_token)
+		# else:
+		# 	token = UserToken.create(test_user,'facebook',access_token)
+
+		user = {'user_id':email, 'email':email}
+		self.auth().set_session(user,User.create_auth_token(email))
+		self.redirect('/')
+
 # Static Pages
 
 class Unauth(BaseHandler):
@@ -624,5 +663,7 @@ app = webapp2.WSGIApplication([('/home',HomePage),
 							    						('/about', About),
 							   							('/contact',Contact),
 							    						('/help',Help),
+							    						('/fblogin',FbLoginHandler),
+							    						('/fbauth',FbAuthHandler),
 															('/addevent',AddEvent)],
 															debug = True, config=config)
