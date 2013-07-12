@@ -1,4 +1,4 @@
-#mytimeline {
+/*#owntimeline {
     height: 200px;
     width: 700px;
 }
@@ -6,7 +6,7 @@
 #alltimelines {
     height: 200px;
     width: 700px;
-}
+}*/
 
 /*#new {
     position: relative;
@@ -24,8 +24,8 @@
 div.timeline-frame {
     border-color: #5D99C3;
 
-    border-radius: 5px;
-    -moz-border-radius: 5px; /* For Firefox 3.6 and older */
+    /*border-radius: 5px;
+    -moz-border-radius: 5px;*/ /* For Firefox 3.6 and older */
 }
  div.timeline-axis {
     border-color: #FBB450;
@@ -64,4 +64,9 @@ div.available {
 div.maybe {
     background-color: #FFA500; /* orange */
     border-color: #cc8100;     /* orange */
+}
+
+#alltimelines, #owntimeline {
+    padding: 0.3em;
+    border-color: black;
 }
