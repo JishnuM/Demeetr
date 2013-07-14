@@ -281,21 +281,20 @@
 							</tr>
 						</thead>
 						<tbody>
+							{% for post in posts %}
 							<tr>
-								<td>John</td>
-								<td>This event is an event to test whether making events through this event site is a satisfactory endeavour.</td>
+								<td>{{ post.author }}</td>
+								<td>{{ post.content }}</td>
 							</tr>
+							{% endfor %}
 							<tr>
-								<td>Adam</td>
-								<td>Whoa so cool i wanna play soccer!</td>
-							</tr>
-							<tr>
-								<td>Somebody</td>
-								<td>*Football</td>
-							</tr>
-							<tr>
-								<td>{ user_name }</td>
-								<td><input class = "input-block-level" type = "text" placeholder = "Comment"</td>
+								<td>{{ user.name }}</td>
+								<td>
+									<form action = "/addpost" method = "post">
+									<input type = "hidden" name = "event_id" value = {{ event.key().id() }}>
+									<input class = "input-block-level" type = "text" name = "content" placeholder = "Comment">
+									</form>
+								</td>
 							</tr>
 						</tbody>
 					</table>

@@ -192,6 +192,11 @@ class Option(db.Model):
 	voters = db.ListProperty(db.Email)
 	satisfied = db.BooleanProperty()
 
+class Post(db.Model):
+	content = db.StringProperty()
+	author = db.StringProperty()
+	created_time = db.DateTimeProperty(auto_now_add=True)
+
 class BaseHandler(webapp2.RequestHandler):
 	def auth(self):
 		return auth.get_auth()
@@ -321,6 +326,13 @@ class Events(BaseHandler):
 										"WHERE ANCESTOR IS :1 "
 										"ORDER BY votes DESC",
 										event_key)
+
+			post_query = db.GqlQuery("SELECT * "
+										"FROM Post "
+										"WHERE ANCESTOR IS :1 "
+										"ORDER BY created_time ASC",
+										 event_key)
+
 			satisfied = []
 			for option in option_query:
 				if option.satisfied:
@@ -356,6 +368,7 @@ class Events(BaseHandler):
 			'event' : event,
 			'user_mail' : user.email,
 			'can_vote' : can_vote,
+			'posts' : post_query,
 			'best': best_option
 			# 'logout' : users.create_logout_url(self.request.host_url)
 			}
@@ -417,6 +430,27 @@ class AddOption(BaseHandler):
 		else:
 			self.redirect('/unauth')
 
+class AddPost(BaseHandler):
+	def post(self):
+		if self.user_info():
+			user = self.get_user()
+
+			event_id = int(self.request.get('event_id'))
+			event_key = db.Key.from_path('Event',event_id)
+			event = db.get(event_key)
+
+			if event == None:
+				self.redirect('/')
+
+			curr_post = Post(parent=event_key)
+			curr_post.content = self.request.get('content')
+			curr_post.author = user.name
+
+			curr_post.put()
+
+			self.redirect('/events?id=' + str(event.key().id()))
+		else:
+			self.redirect('/unauth')
 
 class Profile(BaseHandler):
 	def get(self):
@@ -748,6 +782,7 @@ app = webapp2.WSGIApplication([('/home',HomePage),
 															('/search',UserSearch),
 															('/invite',Invite),
 															('/addoption',AddOption),
+															('/addpost',AddPost),
 															('/addfriend',AddFriend),
 															('/eventvote',Vote),
 															('/unauth',Unauth),

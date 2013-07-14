@@ -21,6 +21,17 @@ indexes:
   - name: votes
     direction: desc
 
+- kind: Post
+  ancestor: yes
+  properties:
+  - name: created_time
+
+- kind: Post
+  ancestor: yes
+  properties:
+  - name: created_time
+    direction: desc
+
 - kind: User
   properties:
   - name: __empty_IN_list__
