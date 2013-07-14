@@ -79,13 +79,30 @@
 								<tr>
 									<td>{{ target_user.email }}</td>
 									{% if target_user.email in user.friends_list %}
-										<td>Friend</td>
+										<td>
+											<button class = "btn btn-warning" disabled>
+											Friend
+											</button>
+										</td>
+									{% elif target_user.email in user.sent_request_list %}
+										<td>
+											<button class = "btn btn-warning" disabled>
+											Request Sent
+											</button>
+										</td>
+									{% elif target_user.email in user.received_request_list %}
+										<td>
+											<form action = "/accept" method = "post">
+												<input type = "hidden" name = "add_email" value = {{ target_user.email }}>
+												<input type = "submit" class = 'btn btn-warning' value = "Accept">
+											</form>
+										</td>									
 									{% else %}
 										<td>
 											<form action = "/addfriend" method = "post">
 												<input type = "hidden" name = "add_email" value = {{ target_user.email }}>
 												<input type = "submit" class = 'btn btn-warning' value = "Add">
-											</input>
+											</form>
 										</td>
 									{% endif %}
 								</tr>

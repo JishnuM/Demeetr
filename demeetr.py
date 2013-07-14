@@ -10,6 +10,10 @@ import logging
 
 # from google.appengine.api import users
 from google.appengine.ext import db
+from apiclient import discovery
+from oauth2client import client
+# from oauth2client import crypt
+from oauth2client import appengine
 
 from webapp2_extras import security
 from webapp2_extras import auth
@@ -22,7 +26,12 @@ jinja_environment = jinja2.Environment(
 
 FACEBOOK_APP_ID = 159729634211589
 FACEBOOK_APP_SECRET = '5cc790402a831637da35937603ee4f33'
-
+GOOGLE_CLIENT_ID = '1014009831090.apps.googleusercontent.com'
+#GOOGLE_CLIENT_ID = '1014009831090-nq72ibol7m6qhbq8rjtfiejjav2qoq7c.apps.googleusercontent.com'
+GOOGLE_CLIENT_SECRET = 'Sa5QaY3r1bwH8SqrDu2JR-ft'
+#GOOGLE_CLIENT_SECRET = 'Mj2mHjEmsvUx4NmeUWRbl-C4'
+local = "http://localhost:8080"
+server = 'https://demeetr.appspot.com'
 # Model definitions
 
 class UserToken(db.Model):
@@ -66,6 +75,8 @@ class User(db.Model):
 	email = db.EmailProperty()
 	event_key_list = db.ListProperty(db.Key)
 	friends_list = db.ListProperty(db.Email)
+	received_request_list = db.ListProperty(db.Email)
+	sent_request_list = db.ListProperty(db.Email)
 	name = db.StringProperty()
 	created = db.DateTimeProperty(auto_now_add=True)
 	updated = db.DateTimeProperty(auto_now=True)
@@ -465,17 +476,48 @@ class AddFriend(BaseHandler):
 			add_key = db.Key.from_path('User',add_email)
 			added_user = db.get(add_key)
 
-			user.friends_list.append(added_user.email)
-			user.put()
-
-			added_user.friends_list.append(user.email)
+			added_user.received_request_list.append(user.email)
 			added_user.put()
+
+			user.sent_request_list.append(added_user.email)
+			user.put()
 
 			self.redirect('/home')
 		else:
 			self.redirect('/unauth')
 
+class AcceptFriend(BaseHandler):
+	def post(self):
+		if self.user_info():
+			user = self.get_user()
 
+			if self.request.get('submitbutton') == 'Accept':
+				add_email = self.request.get('add_email')
+				add_key = db.Key.from_path('User',add_email)
+				added_user = db.get(add_key)
+
+				added_user.friends_list.append(user.email)
+				added_user.sent_request_list.remove(user.email)
+				added_user.put()
+
+				user.friends_list.append(added_user.email)
+				user.received_request_list.remove(added_user.email)
+				user.put()
+			elif self.request.get('submitbutton') == 'Reject':
+				add_email = self.request.get('add_email')
+				add_key = db.Key.from_path('User',add_email)
+				added_user = db.get(add_key)
+
+				added_user.sent_request_list.remove(user.email)
+				added_user.put()
+
+				user.received_request_list.remove(added_user.email)
+				user.put()
+
+
+			self.redirect('/home')
+		else:
+			self.redirect('/unauth')
 class UserSearch(BaseHandler):
 	def post(self):
 		if self.user_info():
@@ -557,13 +599,20 @@ class Vote(BaseHandler):
 
 class FbLoginHandler(BaseHandler):
 	def get(self):
-		args = dict(client_id=FACEBOOK_APP_ID, redirect_uri="http://demeetr.appspot.com/fbauth",scope='email')
+		args = dict(client_id=FACEBOOK_APP_ID, redirect_uri= server + "/fbauth",scope='email')
 		self.redirect("https://graph.facebook.com/oauth/authorize?" + 
+									urllib.urlencode(args))
+
+class GLoginHandler(BaseHandler):
+	def get(self):
+		args = dict(client_id=GOOGLE_CLIENT_ID, redirect_uri= server + "/googleauth",
+								scope="https://www.googleapis.com/auth/userinfo.email ", response_type="code")
+		self.redirect("https://accounts.google.com/o/oauth2/auth?" + 
 									urllib.urlencode(args))
 
 class FbAuthHandler(BaseHandler):
 	def get(self):
-		args = dict(client_id=FACEBOOK_APP_ID, redirect_uri="http://demeetr.appspot.com/fbauth",scope='email')
+		args = dict(client_id=FACEBOOK_APP_ID, redirect_uri=server + "/fbauth",scope='email')
 		args['client_secret'] = FACEBOOK_APP_SECRET
 		args['code'] = self.request.get('code')
 		#Confirming Identity
@@ -590,10 +639,53 @@ class FbAuthHandler(BaseHandler):
 			newUser.auth_id = email
 			newUser.fb_token = access_token
 			newUser.put()
+		else:
+			test_user.fb_token = access_token
 		# 	token = UserToken.create(newUser,'facebook',access_token)
 		# else:
 		# 	token = UserToken.create(test_user,'facebook',access_token)
+		user = {'user_id':email, 'email':email}
+		self.auth().set_session(user,User.create_auth_token(email))
+		self.redirect('/')
 
+class GAuthHandler(BaseHandler):
+	def get(self):
+		logging.warning('Beginning')
+		args = dict(client_id=GOOGLE_CLIENT_ID, redirect_uri=server + "/googleauth")
+		args['client_secret'] = GOOGLE_CLIENT_SECRET
+		args['code'] = self.request.get('code') 
+		args['grant_type'] = 'authorization_code'
+		url = 'https://accounts.google.com/o/oauth2/token'
+		data = urllib.urlencode(args)
+		req = urllib.urlopen(url,data)
+		response = req.read()
+		# logging.warning(response)
+		# logging.warning('Going to try for id token')
+		id_token = client._extract_id_token(json.loads(response)["id_token"])
+		email = id_token["email"]
+		# access_token = crypt._urlsafe_b64decode(json.loads(response)["access_token"])
+		# logging.warning(access_token)
+		# logging.warning('Going to try for profile with' + access_token)
+		# profile_response = urllib.urlopen(
+		# 					"https://wwww.googleapis.com/oauth2/v1/userinfo?access_token=" + 
+		# 					access_token).read()
+		# logging.warning(profile_response)
+		# profile = json.loads(profile_response)
+		# logging.warning('Going to try for email')
+		# email = profile["email"]
+		test_key = db.Key.from_path('User',email)
+		test_user = db.get(test_key)
+		# self.auth().unset_session()
+		if test_user == None:
+			newUser = User(key_name = email)
+			newUser.email = email
+			newUser.name = email
+			newUser.event_key_list = []
+			newUser.auth_id = email
+			newUser.g_token = id_token
+			newUser.put()
+		else:
+			newUser.g_token = id_token
 		user = {'user_id':email, 'email':email}
 		self.auth().set_session(user,User.create_auth_token(email))
 		self.redirect('/')
@@ -663,7 +755,10 @@ app = webapp2.WSGIApplication([('/home',HomePage),
 							    						('/about', About),
 							   							('/contact',Contact),
 							    						('/help',Help),
+							    						('/accept',AcceptFriend),
 							    						('/fblogin',FbLoginHandler),
 							    						('/fbauth',FbAuthHandler),
+							    						('/googlelogin',GLoginHandler),
+							    						('/googleauth',GAuthHandler),
 															('/addevent',AddEvent)],
 															debug = True, config=config)

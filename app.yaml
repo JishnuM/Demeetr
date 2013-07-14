@@ -32,6 +32,22 @@ handlers:
   script: demeetr.app
   secure: always
 
+- url: /fblogin
+  script: demeetr.app
+  secure: always
+
+- url: /fbauth
+  script: demeetr.app
+  secure: always
+
+# - url: /googlelogin
+#   script: demeetr.app
+#   secure: always
+
+# - url: /googleauth
+#   script: demeetr.app
+#   secure: always
+
 - url: /.*
   script: demeetr.app
   # login: required
@@ -41,4 +57,7 @@ libraries:
   version: "2.5.2"
 
 - name: jinja2
-  version: latest
+  version: "latest"
+
+- name: pycrypto
+  version: "latest"

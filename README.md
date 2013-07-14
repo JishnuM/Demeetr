@@ -1,4 +1,6 @@
-vomeet
+Demeetr
 ======
 
-Orbital - Google App Engine app - Vomeet
+Orbital - Google App Engine app - Demeetr
+
+Simplifying ad-hoc meetups
