@@ -12,6 +12,9 @@
 		<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
 		<script type="text/javascript" src="../js/demeetr.js"></script>
 		<script type="text/javascript" src="../js/bootstrap.min.js"></script>
+		<!--dateTime picker-->
+		<link href = "../css/bootstrap-datetimepicker.min.css" rel="stylesheet" media="screen" type="text/css"/>
+		<script type="text/javascript" src="../js/bootstrap-datetimepicker.min.js"></script>
 
 	</head>
 	<body>
@@ -92,11 +95,29 @@
 					<form action="/addevent" method= "post" class = "form-inline">
 						<fieldset>
 							<!-- <label>Event title</label> -->
-							<input class="input-medium" type = "text" name = "event_title" placeholder = "Event Title" required>
+							<input class="input-medium" type = "text" name = "event_title" placeholder = "Event Title" required style="margin:10px">
 
 							<!-- <label>Event Window</label> -->
-							<input id = "startdate" class = "input-small"type = "text" name = "start" placeholder = "Start Date" required>
+							<!-- <input id = "startdate" class = "input-small"type = "text" name = "start" placeholder = "Start Date" required>
 							<input id = "enddate" class = "input-small" type = "text" name = "end" placeholder = "End Date" required>
+ -->
+							<div class="well">
+								<div id="startdate" class="input-append date">
+						    		<input data-format="dd/MM/yyyy hh:mm:ss" type="text" name = "start" placeholder = "Start Date" required></input>
+						    		<span class="add-on">
+						      			<i data-time-icon="icon-time" data-date-icon="icon-calendar">
+						      			</i>
+						    		</span>
+						  		</div>
+
+						  		<div id="enddate" class="input-append date">
+						    		<input data-format="dd/MM/yyyy hh:mm:ss" type="text" name = "end" placeholder = "End Date" required></input>
+						    		<span class="add-on">
+						      			<i data-time-icon="icon-time" data-date-icon="icon-calendar">
+						     			</i>
+						    		</span>
+						  		</div>
+						  	</div>
 
 							<button type="submit" class="btn">Create Event</button>
 						</fieldset>

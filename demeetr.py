@@ -7,6 +7,7 @@ import urllib
 import cgi
 import json
 import logging
+import gviz_api
 
 # from google.appengine.api import users
 from google.appengine.ext import db
@@ -72,6 +73,12 @@ class User(db.Model):
 	password = db.StringProperty()
 	auth_id = db.StringProperty()
 	fb_token = db.StringProperty()
+	all_start = db.ListProperty(datetime.datetime)
+	all_end = db.ListProperty(datetime.datetime)
+	all_content = db.ListProperty(str)
+	all_group = db.ListProperty(str)
+	all_className = db.ListProperty(str)
+	total_events = db.IntegerProperty()
 
 
 	def get_id(self):
@@ -165,10 +172,15 @@ class Event(db.Model):
 	respondents = db.ListProperty(db.Email)
 	best_option_key = db.ReferenceProperty()
 	best_time = db.DateTimeProperty()
-	time_window_start = db.StringProperty()
-	time_window_end = db.StringProperty()
+	time_window_start = db.DateTimeProperty()
+	time_window_end = db.DateTimeProperty()
 	raw_time_list = db.ListProperty(str)
-	overall_time_chart = db.ListProperty(str)
+	overall_start = db.ListProperty(datetime.datetime)
+	overall_end = db.ListProperty(datetime.datetime)
+	overall_content = db.ListProperty(str)
+	overall_group = db.ListProperty(str)
+	overall_className = db.ListProperty(str)
+	total_times = db.IntegerProperty()
 	confirmed = db.BooleanProperty()
 
 class Option(db.Model):
@@ -237,6 +249,7 @@ class Signup(BaseHandler):
 			newUser.friends_list = []
 			newUser.event_key_list = []
 			newUser.auth_id = email
+			newUser.total_events = 0
 			newUser.put()
 
 			# user_id = newUser.get_id()
@@ -337,7 +350,64 @@ class Events(BaseHandler):
 			if total_votes == 0:
 				total_votes = 1
 
+			description =  [("start", "datetime"),
+							("end", "datetime"),
+							("content", "string"),
+							("group", "string"),
+							("className", "string")]
+			data = []
+			# to get values from datastore into data
+
+			for iterator in range(0, event.total_times):
+				temp_start = event.overall_start[iterator]
+				temp_end = event.overall_end[iterator]
+				temp_content = event.overall_content[iterator]
+				temp_group = event.overall_group[iterator]
+				temp_className = event.overall_className[iterator]
+				temp_event = [temp_start, temp_end, temp_content, temp_group, temp_className]
+				data.append(temp_event)
+
+			# for debugging purposes
+			# test1 = datetime.datetime(2013, 8, 1, 15, 23, 25)
+			# test2 = datetime.datetime(2013, 8, 2, 11, 23, 25)
+			# test3 = datetime.datetime(2013, 8, 1, 10, 2, 25)
+			# test1e = datetime.datetime(2013, 8, 2, 15, 23, 25)
+			# test2e = datetime.datetime(2013, 8, 3, 11, 23, 25)
+			# test3e = datetime.datetime(2013, 8, 2, 10, 2, 25)
+			# data = [[test1, test1e, "Unavailable", "1st", "unavailable"],
+			# 		[test2, test2e, "Available", "2st", "available"],
+			# 		[test3, test3e, "Maybe", "3st", "maybe"]]
+
+			# Loading it into gviz_api.DataTable
+			data_table = gviz_api.DataTable(description)
+			data_table.LoadData(data)
+
+			json = data_table.ToJSon(columns_order=("start", "end", "content", "group", "className"),
+			                          order_by="group")
+
+			#for owntimetable
+			data_own = []
+
+			for iterator_own in range(0, user.total_events):
+				user_start = user.all_start[iterator_own]
+				user_end = user.all_end[iterator_own]
+				user_content = user.all_content[iterator_own]
+				user_group = user.all_group[iterator_own]
+				user_className = user.all_className[iterator_own]
+				user_event = [user_start, user_end, user_content, user_group, user_className]
+				data_own.append(user_event)
+
+			# Loading it into gviz_api.DataTable
+			data_table_own = gviz_api.DataTable(description)
+			data_table_own.LoadData(data_own)
+
+			# Creating a JSon string
+			json_own = data_table_own.ToJSon(columns_order=("start", "end", "content", "group", "className"),
+			                          order_by="group")
+
 			template_values = {
+			'json' : json,
+			'json_own' :json_own,
 			'total_votes' : total_votes,
 			'options' : option_query,
 			'user' : user,
@@ -365,11 +435,16 @@ class AddEvent(BaseHandler):
 			user = self.get_user()
 			event = Event()
 			event.title = self.request.get('event_title')
-			event.time_window_start = self.request.get('start')
-			event.time_window_end = self.request.get('end')
+			
+			datetime_start = datetime.datetime.strptime((self.request.get('start')), '%d/%m/%Y %H:%M:%S')
+			datetime_end = datetime.datetime.strptime((self.request.get('end')), '%d/%m/%Y %H:%M:%S')
+
+			event.time_window_start = datetime_start
+			event.time_window_end = datetime_end
 			event.creator = user.email
 			event.invitees = [event.creator]
 			event.respondents = []
+			event.total_times = 0
 			event.confirmed = False
 
 			event.put()
@@ -380,6 +455,41 @@ class AddEvent(BaseHandler):
 			self.redirect('/events?id=' + str(event.key().id()))
 		else:
 			self.redirect('/unauth')
+
+class AddAvailability(BaseHandler):
+	def post(self):
+		if self.user_info():
+			my_id = int(self.request.get('id'))
+			event_key = db.Key.from_path('Event',my_id)
+			event = db.get(event_key)
+
+			if event == None:
+				self.redirect('/')
+
+			user = self.get_user()
+			datetime_start = datetime.datetime.strptime((self.request.get('start_avail')), '%d/%m/%Y %H:%M:%S')
+			datetime_end = datetime.datetime.strptime((self.request.get('end_avail')), '%d/%m/%Y %H:%M:%S')
+
+			#event
+			event.overall_start.append(datetime_start)
+			event.overall_end.append(datetime_end)
+			event.overall_content.append(self.request.get('availability'))
+			event.overall_group.append(user.name)
+			event.overall_className.append(self.request.get('availability'))
+			event.total_times += 1
+
+			#user
+			user.all_start.append(datetime_start)
+			user.all_end.append(datetime_end)
+			user.all_content.append(self.request.get('availability'))
+			user.all_group.append(user.name)
+			user.all_className.append(self.request.get('availability'))
+			user.total_events += 1
+
+			self.redirect('/events?id=' + str(event.key().id()))
+		else:
+			self.redirect('/unauth')
+
 
 class AddOption(BaseHandler):
 	def post(self):
@@ -646,24 +756,25 @@ config = {
 }
 
 app = webapp2.WSGIApplication([('/home',HomePage),
-															('/signup',Signup),
-															('/login',Login),
-															('/logout',Logout),
-															('/messages',Messages),
-															('/settings',Settings),
-															('/profile',Profile),
-															('/events',Events),
-															('/search',UserSearch),
-															('/invite',Invite),
-															('/addoption',AddOption),
-															('/addfriend',AddFriend),
-															('/eventvote',Vote),
-															('/unauth',Unauth),
-															('/', FrontPage),
-							    						('/about', About),
-							   							('/contact',Contact),
-							    						('/help',Help),
-							    						('/fblogin',FbLoginHandler),
-							    						('/fbauth',FbAuthHandler),
-															('/addevent',AddEvent)],
-															debug = True, config=config)
+								('/signup',Signup),
+								('/login',Login),
+								('/logout',Logout),
+								('/messages',Messages),
+								('/settings',Settings),
+								('/profile',Profile),
+								('/events',Events),
+								('/search',UserSearch),
+								('/invite',Invite),
+								('/addoption',AddOption),
+								('/addavailability',AddAvailability),
+								('/addfriend',AddFriend),
+								('/eventvote',Vote),
+								('/unauth',Unauth),
+								('/', FrontPage),
+							    ('/about', About),
+							   	('/contact',Contact),
+							    ('/help',Help),
+							    ('/fblogin',FbLoginHandler),
+							    ('/fbauth',FbAuthHandler),
+								('/addevent',AddEvent)],
+								debug = True, config=config)
