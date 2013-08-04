@@ -1,16 +1,25 @@
 
 $(function() {
-		$( "#startdate" ).datepicker();
+		$( "#startdate" ).datetimepicker({
+			language: 'en'
+		});
 });
 
 $(function() {
-		$( "#enddate" ).datepicker();
+		$( "#enddate" ).datetimepicker({
+			language: 'en'
+		});
 });
 
 $(function() {
-	$( "#alltimelines" ).resizable();
+		$( "#start_avail" ).datetimepicker({
+			language: 'en'
+		});
 });
 
 $(function() {
-	$( "#owntimeline" ).resizable();
+		$( "#end_avail" ).datetimepicker({
+			language: 'en'
+		});
 });
+
