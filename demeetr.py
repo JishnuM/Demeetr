@@ -483,8 +483,8 @@ class AddEvent(BaseHandler):
 class AddAvailability(BaseHandler):
 	def post(self):
 		if self.user_info():
-			my_id = int(self.request.get('id'))
-			event_key = db.Key.from_path('Event',my_id)
+			event_id = int(self.request.get('event_id'))
+			event_key = db.Key.from_path('Event',event_id)
 			event = db.get(event_key)
 
 			if event == None:
@@ -882,7 +882,6 @@ config = {
 }
 
 app = webapp2.WSGIApplication([('/home',HomePage),
-<<<<<<< HEAD
 								('/signup',Signup),
 								('/login',Login),
 								('/logout',Logout),
@@ -903,32 +902,10 @@ app = webapp2.WSGIApplication([('/home',HomePage),
 							    ('/help',Help),
 							    ('/fblogin',FbLoginHandler),
 							    ('/fbauth',FbAuthHandler),
+								('/addevent',AddEvent),
+								('/addpost',AddPost),
+								('/accept',AcceptFriend),
+								('/googlelogin',GLoginHandler),
+							    ('/googleauth',GAuthHandler),
 								('/addevent',AddEvent)],
 								debug = True, config=config)
-=======
-															('/signup',Signup),
-															('/login',Login),
-															('/logout',Logout),
-															('/messages',Messages),
-															('/settings',Settings),
-															('/profile',Profile),
-															('/events',Events),
-															('/search',UserSearch),
-															('/invite',Invite),
-															('/addoption',AddOption),
-															('/addpost',AddPost),
-															('/addfriend',AddFriend),
-															('/eventvote',Vote),
-															('/unauth',Unauth),
-															('/', FrontPage),
-							    						('/about', About),
-							   							('/contact',Contact),
-							    						('/help',Help),
-							    						('/accept',AcceptFriend),
-							    						('/fblogin',FbLoginHandler),
-							    						('/fbauth',FbAuthHandler),
-							    						('/googlelogin',GLoginHandler),
-							    						('/googleauth',GAuthHandler),
-															('/addevent',AddEvent)],
-															debug = True, config=config)
->>>>>>> b45bb6360f7e3cfeae24401a7039ef970d0268d9
