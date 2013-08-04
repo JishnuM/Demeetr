@@ -552,6 +552,7 @@ class AcceptFriend(BaseHandler):
 			self.redirect('/home')
 		else:
 			self.redirect('/unauth')
+
 class UserSearch(BaseHandler):
 	def post(self):
 		if self.user_info():
@@ -600,9 +601,24 @@ class Messages(BaseHandler):
 		# if user:
 		if self.user_info():
 			user = self.get_user()
+
+			message_query = db.GqlQuery("SELECT * "
+											"FROM Post "
+											"WHERE ANCESTOR IS :1 "
+											"ORDER BY created_time ASC",
+										 	user.key())
+
+			friend_array = []
+
+			for friend in user.friends_list:
+				friend_array.append(friend)
+
+			friend_array = map(json.dumps,friend_array)
+
 			template_values = {
-			'user': user
-			# 'logout' : users.create_logout_url(self.request.host_url)
+			'user': user,
+			'messages':message_query,
+			'friend_array':friend_array
 			}
 			template = jinja_environment.get_template('usermsgs.html')
 			self.response.out.write(template.render(template_values))
@@ -610,6 +626,28 @@ class Messages(BaseHandler):
 			self.redirect('/unauth')
 		# else:
 		# 	self.redirect(users.create_login_url(self.request.uri))
+
+class SendMessage(BaseHandler):
+	def post(self):
+		if self.user_info():
+			user = self.get_user()
+
+			recipient_email = self.request.get('recipient')
+			recipient_key = db.Key.from_path('User',recipient_email)
+			recipient = db.get(recipient_key)
+
+			if recipient == None:
+				self.redirect('/messages')
+
+			curr_post = Post(parent=recipient_key)
+			curr_post.content = self.request.get('content')
+			curr_post.author = user.name
+
+			curr_post.put()
+
+			self.redirect('/messages')
+		else:
+			self.redirect('/unauth')
 
 class Vote(BaseHandler):
 	def post(self):
@@ -776,6 +814,7 @@ app = webapp2.WSGIApplication([('/home',HomePage),
 															('/login',Login),
 															('/logout',Logout),
 															('/messages',Messages),
+															('/send',SendMessage),
 															('/settings',Settings),
 															('/profile',Profile),
 															('/events',Events),
