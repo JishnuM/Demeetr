@@ -12,14 +12,18 @@ $(function() {
 });
 
 $(function() {
-		$( "#start_avail" ).datetimepicker({
+		$( "#startavail" ).datetimepicker({
 			language: 'en'
 		});
 });
 
 $(function() {
-		$( "#end_avail" ).datetimepicker({
+		$( "#endavail" ).datetimepicker({
 			language: 'en'
 		});
 });
 
+$('.selectpicker').selectpicker({
+    style: 'btn-info',
+    size: 4
+});

@@ -198,7 +198,7 @@ class Option(db.Model):
 	title = db.StringProperty()
 	description = db.StringProperty()
 	place = db.StringProperty()
-	duration = db.FloatProperty()
+	duration = db.IntegerProperty()
 	minimum = db.IntegerProperty()
 	votes = db.IntegerProperty()
 	voters = db.ListProperty(db.Email)
@@ -265,6 +265,11 @@ class Signup(BaseHandler):
 			newUser.friends_list = []
 			newUser.event_key_list = []
 			newUser.auth_id = email
+			newUser.all_start = []
+			newUser.all_end = []
+			newUser.all_content = []
+			newUser.all_group = []
+			newUser.all_className = []
 			newUser.total_events = 0
 			newUser.put()
 
@@ -297,7 +302,6 @@ class Logout(BaseHandler):
 
 class HomePage(BaseHandler):
 	def get(self):
-
 		if self.user_info():
 			user = self.get_user()
 			key_list = user.event_key_list
@@ -367,11 +371,21 @@ class Events(BaseHandler):
 				else:
 					can_vote.append(True)
 
+
 			total_votes = 0
 			for option in option_query:
 				total_votes += option.votes
 			if total_votes == 0:
 				total_votes = 1
+
+			# if event.confirmed:
+			# 	for x in range(0, event.total_times):
+			# 		if event.className[x] == 'available':
+			# 			temp_delta = datetime.timedelta(days = best_option.duration.day(), hours = best_option.duration.hour())
+			# 			if ((event.overall_end - event.overall_start)>temp_delta):
+			# 				date.append
+
+
 
 			description =  [("start", "datetime"),
 							("end", "datetime"),
@@ -379,18 +393,9 @@ class Events(BaseHandler):
 							("group", "string"),
 							("className", "string")]
 			data = []
-			# to get values from datastore into data
-
-			for iterator in range(0, event.total_times):
-				temp_start = event.overall_start[iterator]
-				temp_end = event.overall_end[iterator]
-				temp_content = event.overall_content[iterator]
-				temp_group = event.overall_group[iterator]
-				temp_className = event.overall_className[iterator]
-				temp_event = [temp_start, temp_end, temp_content, temp_group, temp_className]
-				data.append(temp_event)
 
 			# for debugging purposes
+			# enter data directly
 			# test1 = datetime.datetime(2013, 8, 1, 15, 23, 25)
 			# test2 = datetime.datetime(2013, 8, 2, 11, 23, 25)
 			# test3 = datetime.datetime(2013, 8, 1, 10, 2, 25)
@@ -400,15 +405,46 @@ class Events(BaseHandler):
 			# data = [[test1, test1e, "Unavailable", "1st", "unavailable"],
 			# 		[test2, test2e, "Available", "2st", "available"],
 			# 		[test3, test3e, "Maybe", "3st", "maybe"]]
+			# enter data in datastore
+			# event.overall_start.append(test1)
+			# event.overall_end.append(test1e)
+			# event.overall_content.append("available")
+			# event.overall_group.append(user.name)
+			# event.overall_className.append("available")
+
+			# event.overall_start.append(test2)
+			# event.overall_end.append(test2e)
+			# event.overall_content.append("unavailable")
+			# event.overall_group.append(user.name)
+			# event.overall_className.append("unavailable")
+
+			# event.overall_start.append(test3)
+			# event.overall_end.append(test3e)
+			# event.overall_content.append("maybe")
+			# event.overall_group.append(user.name)
+			# event.overall_className.append("maybe")
+			# event.total_times += 3
+			# event.put()
+
+			# to get values from datastore into data
+			for iterator in range(0, event.total_times):
+				temp_start = event.overall_start[iterator]
+				temp_end = event.overall_end[iterator]
+				temp_content = event.overall_content[iterator]
+				temp_group = event.overall_group[iterator]
+				temp_className = event.overall_className[iterator]
+				temp_event = [temp_start, temp_end, temp_content, temp_group, temp_className]
+				data.append(temp_event)
 
 			# Loading it into gviz_api.DataTable
 			data_table = gviz_api.DataTable(description)
-			data_table.LoadData(data)
-
+			data_table.LoadData(data
+				)
+			# Creating a JSon string
 			json = data_table.ToJSon(columns_order=("start", "end", "content", "group", "className"),
 			                          order_by="group")
 
-			#for owntimetable
+			# for owntimetable
 			data_own = []
 
 			for iterator_own in range(0, user.total_events):
@@ -427,6 +463,7 @@ class Events(BaseHandler):
 			# Creating a JSon string
 			json_own = data_table_own.ToJSon(columns_order=("start", "end", "content", "group", "className"),
 			                          order_by="group")
+
 
 			template_values = {
 			'json' : json,
@@ -468,6 +505,11 @@ class AddEvent(BaseHandler):
 			event.creator = user.email
 			event.invitees = [event.creator]
 			event.respondents = []
+			overall_start = []
+			overall_end = []
+			overall_content = []
+			overall_group = []
+			overall_className = []
 			event.total_times = 0
 			event.confirmed = False
 
@@ -491,24 +533,33 @@ class AddAvailability(BaseHandler):
 				self.redirect('/')
 
 			user = self.get_user()
-			datetime_start = datetime.datetime.strptime((self.request.get('start_avail')), '%d/%m/%Y %H:%M:%S')
-			datetime_end = datetime.datetime.strptime((self.request.get('end_avail')), '%d/%m/%Y %H:%M:%S')
+			start = self.request.get('start_avail')
+			end = self.request.get('end_avail')
+			datetime_start = datetime.datetime.strptime(start, '%d/%m/%Y %H:%M:%S')
+			datetime_end = datetime.datetime.strptime(end, '%d/%m/%Y %H:%M:%S')
+			availability = self.request.get('availability')
 
-			#event
+			# for debugging
+			# datetime_start = datetime.datetime(2013, 8, 4, 15, 23, 25)
+			# datetime_end = datetime.datetime(2013, 8, 5, 11, 23, 25)
+			# availability = "available"
+			
 			event.overall_start.append(datetime_start)
 			event.overall_end.append(datetime_end)
-			event.overall_content.append(self.request.get('availability'))
+			event.overall_content.append(availability)
 			event.overall_group.append(user.name)
-			event.overall_className.append(self.request.get('availability'))
+			event.overall_className.append(availability.lower())
 			event.total_times += 1
+			event.put()
 
 			#user
 			user.all_start.append(datetime_start)
 			user.all_end.append(datetime_end)
-			user.all_content.append(self.request.get('availability'))
+			user.all_content.append(availability)
 			user.all_group.append(user.name)
-			user.all_className.append(self.request.get('availability'))
+			user.all_className.append(availability.lower())
 			user.total_events += 1
+			user.put()
 
 			self.redirect('/events?id=' + str(event.key().id()))
 		else:
@@ -529,7 +580,7 @@ class AddOption(BaseHandler):
 			curr_option.title = self.request.get('title')
 			curr_option.description = self.request.get('desc')
 			curr_option.place = self.request.get('place')
-			curr_option.duration = float(self.request.get('duration'))
+			curr_option.duration = int(self.request.get('duration'))
 			curr_option.minimum = int(self.request.get('min'))
 			curr_option.votes = 0
 			curr_option.satisfied = (curr_option.votes >= curr_option.minimum)
@@ -817,9 +868,16 @@ class FbAuthHandler(BaseHandler):
 			newUser = User(key_name = email)
 			newUser.email = email
 			newUser.name = profile["name"]
+			newUser.friends_list = []
 			newUser.event_key_list = []
 			newUser.auth_id = email
 			newUser.fb_token = access_token
+			newUser.all_start = []
+			newUser.all_end = []
+			newUser.all_content = []
+			newUser.all_group = []
+			newUser.all_className = []
+			newUser.total_events = 0
 			newUser.put()
 		else:
 			test_user.fb_token = access_token
@@ -862,9 +920,16 @@ class GAuthHandler(BaseHandler):
 			newUser = User(key_name = email)
 			newUser.email = email
 			newUser.name = email
+			newUser.friends_list = []
 			newUser.event_key_list = []
 			newUser.auth_id = email
 			newUser.g_token = id_token
+			newUser.all_start = []
+			newUser.all_end = []
+			newUser.all_content = []
+			newUser.all_group = []
+			newUser.all_className = []
+			newUser.total_events = 0
 			newUser.put()
 		else:
 			newUser.g_token = id_token
@@ -920,23 +985,23 @@ config = {
 }
 
 app = webapp2.WSGIApplication([('/home',HomePage),
-															('/signup',Signup),
-															('/login',Login),
-															('/logout',Logout),
-															('/messages',Messages),
-															('/send',SendMessage),
-															('/settings',Settings),
-															('/profile',Profile),
-															('/events',Events),
-															('/search',UserSearch),
-															('/invite',Invite),
-															('/addoption',AddOption),
-															('/addpost',AddPost),
-															('/addavailability',AddAvailability),
-															('/addfriend',AddFriend),
-															('/eventvote',Vote),
-															('/unauth',Unauth),
-															('/', FrontPage),
+														('/signup',Signup),
+														('/login',Login),
+														('/logout',Logout),
+														('/messages',Messages),
+														('/send',SendMessage),
+														('/settings',Settings),
+														('/profile',Profile),
+														('/events',Events),
+														('/search',UserSearch),
+														('/invite',Invite),
+														('/addoption',AddOption),
+														('/addpost',AddPost),
+														('/addavailability',AddAvailability),
+														('/addfriend',AddFriend),
+														('/eventvote',Vote),
+														('/unauth',Unauth),
+														('/', FrontPage),
 							    						('/about', About),
 							   							('/contact',Contact),
 							    						('/help',Help),
@@ -945,5 +1010,5 @@ app = webapp2.WSGIApplication([('/home',HomePage),
 							    						('/fbauth',FbAuthHandler),
 							    						('/googlelogin',GLoginHandler),
 							    						('/googleauth',GAuthHandler),
-															('/addevent',AddEvent)],
-															debug = True, config=config)
+														('/addevent',AddEvent)],
+														debug = True, config=config)

@@ -18,9 +18,6 @@
 		<!--dateTime picker-->
 		<link href = "../css/bootstrap-datetimepicker.min.css" rel="stylesheet" media="screen" type="text/css"/>
 		<script type="text/javascript" src="../js/bootstrap-datetimepicker.min.js"></script>
-		<!-- botstrap selector -->
-		<link href = "../css/bootstrap-select.css" rel="stylesheet" type="text/css"/>
-		<script type="text/javascript" src="../js/bootstrap-select.js"></script>
 		<!--timeline related-->
 		<script type="text/javascript" src="http://www.google.com/jsapi"></script>
 		<script type="text/javascript" src="../js/timeline.js"></script>
@@ -297,7 +294,7 @@
 						<h3 id="myModalLabel">Add a new option!</h3>
 					</div>
 					<div class="modal-body">
-						<form action = "addoption" method = "post">
+						<form action = "/addoption" method = "post">
 							<fieldset>
 								<label>Title</label>
 								<input type="text" name = "title" placeholder="Short and snappy" required>
@@ -348,7 +345,7 @@
 										<!-- <label>Time Window</label> -->
 										<input type = "hidden" name = "event_id" value = {{ event.key().id() }}>
 										<div class="well">
-											<div id="start_avail" class="input-append date">
+											<div id="startavail" class="input-append date">
 							    				<input data-format="dd/MM/yyyy hh:mm:ss" type="text" name = "start_avail" placeholder = "Start Date" required></input>
 							    				<span class="add-on">
 							      					<i data-time-icon="icon-time" data-date-icon="icon-calendar">
@@ -356,7 +353,7 @@
 							    				</span>
 							  				</div>
 			
-							  				<div id="end_avail" class="input-append date">
+							  				<div id="endavail" class="input-append date">
 							    				<input data-format="dd/MM/yyyy hh:mm:ss" type="text" name = "end_avail" placeholder = "End Date" required></input>
 							    				<span class="add-on">
 							      					<i data-time-icon="icon-time" data-date-icon="icon-calendar">
@@ -364,11 +361,16 @@
 							    				</span>
 							  				</div>
 							  			</div>
-										<select class="selectpicker" name = "availability" form = "#avail_form" required>
-											<option value = "available">Available</option>
-											<option value = "unavailable">Unavailable</option>
-											<option value = "maybe">Maybe</option>
-										</select>
+							  			<!-- debugging -->
+							  			<!-- <input class="input-medium" type = "text" name = "availability" placeholder = "available, unavailable or maybe" required> -->
+										<label class="radio">
+											<input type="radio" name="availability" id="optionsRadios1" value="Available" checked>
+											Available
+										</label>
+										<label class="radio">
+											<input type="radio" name="availability" id="optionsRadios2" value="Unavailable">
+											Unavailable
+										</label>
 										<button type="submit" class="btn">Add Availability</button>
 									</fieldset>
 								</form>

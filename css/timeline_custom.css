@@ -1,24 +1,12 @@
-/*#owntimeline {
-    height: 200px;
+#owntimeline {
+    height: 300px;
     width: 700px;
 }
 
 #alltimelines {
-    height: 200px;
+    height: 300px;
     width: 700px;
-}*/
-
-/*#new {
-    position: relative;
-    left: 25px; 
-    top: 8px;
-
-    text-transform: uppercase;
-    color: white;
-    font-weight: bold;
-    font-size: 40px;
-    text-decoration: none;
-}*/
+}
 
     /* Custom styles for the Timeline */
 div.timeline-frame {
